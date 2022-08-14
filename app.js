@@ -1,20 +1,23 @@
 const express = require('express');
+const fs = require('fs');
 
+const users = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/users.json`));
+
+//* Creating an express app
 const app = express();
 
-// Routing
-app.get('/', (req, res) => {
+//* Routing
+app.get('/api/v1/users/', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'Hello from the server!'
+    results: users.length,
+    data: {
+      users,
+    },
   });
 });
 
-app.post('/', (req, res) => {
-  res.send('You can post to this endpoint!')
-})
-
-// Starting a server
+//* Starting a server
 const port = 8000;
 
 app.listen(port, () => {
