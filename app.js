@@ -23,6 +23,17 @@ app.get('/api/v1/users/', (req, res) => {
   });
 });
 
+app.get('/api/v1/users/:id', (req, res) => {
+  const user = users.find((user) => user.id === +req.params.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user,
+    },
+  });
+});
+
 app.post('/api/v1/users', (req, res) => {
   const newId = users[users.length - 1].id + 1;
   const newUser = { id: newId, ...req.body };
