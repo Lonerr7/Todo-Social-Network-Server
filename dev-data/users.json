@@ -1,14 +1,18 @@
 [
   {
+    "id": 1,
     "name": "Vanya",
     "surname": "Karabankov",
     "age": 21,
     "city": "Mogilev"
   },
   {
+    "id": 2,
     "name": "Dima",
     "surname": "Mikolutskiy",
     "age": 21,
     "city": "Mogilev"
-  }
+  },
+  { "id": 3, "name": "Igor" },
+  { "id": 4, "name": "Igor" }
 ]
