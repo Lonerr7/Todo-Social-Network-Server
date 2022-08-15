@@ -31,7 +31,7 @@ exports.createUser = (req, res) => {
 
   users.push(newUser);
   fs.writeFile(
-    `${__dirname}/dev-data/users.json`,
+    `${__dirname}/../dev-data/users.json`,
     JSON.stringify(users),
     () => {
       res.status(201).json({
@@ -58,4 +58,17 @@ exports.deleteUser = (req, res) => {
     status: 'success',
     data: null,
   });
+};
+
+//* Middleware functions
+
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.surname || !req.body.age || !req.body.city) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Please provide a correct request body',
+    });
+  }
+
+  next();
 };
