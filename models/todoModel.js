@@ -8,9 +8,10 @@ const todoSchema = new mongoose.Schema({
   },
   difficulty: {
     type: String,
-    enum: ['Easy', 'Medium', 'Hard'],
-    default: 'Easy',
+    enum: ['easy', 'medium', 'hard'],
+    default: 'easy',
     trim: true,
+    lowercase: true,
   },
   isCompleted: {
     type: Boolean,

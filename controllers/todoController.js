@@ -2,9 +2,50 @@ const Todo = require('../models/todoModel');
 
 exports.getAllTodos = async (req, res) => {
   try {
-    const todos = await Todo.find();
+    // BUILD QUERY
+    // 1A) FIltering
+    const { page, sort, limit, fields, ...queryObj } = req.query;
 
-    res.status(500).json({
+    // 1B) Advanced filtering
+    const replacedQueryObj = JSON.parse(
+      JSON.stringify(queryObj).replace(
+        /\b(gte|gt|lte|lt)\b/g,
+        (matched) => `$${matched}`
+      )
+    );
+
+    let query = Todo.find(replacedQueryObj);
+
+    // 2) Sorting (dosent work anything, but numbers)
+    if (sort) {
+      // const sortBy = sort.replace(',', ' ');
+      // query = query.sort(sort);
+    } else {
+      query = query.sort('_id');
+    }
+
+    // 3) Field limiting
+    if (fields) {
+      const selectedFields = fields.split(',').join(' ');
+      console.log(selectedFields);
+
+      query = query.select(selectedFields);
+    } else {
+      query = query.select('-__v');
+    }
+
+    // 4) Pagination
+    const currentPage = +page || 1;
+    const currentLimit = +limit || 10;
+    const skip = (currentPage - 1) * currentLimit;
+
+    query = query.skip(skip).limit(currentLimit);
+
+    // EXECUTE QUERY
+    const todos = await query;
+
+    // SEND RESPONSE
+    res.status(200).json({
       status: 'success',
       results: todos.length,
       data: {
@@ -23,6 +64,9 @@ exports.createTodo = async (req, res) => {
   try {
     const newTodo = await Todo.create({
       taskText: req.body.taskText,
+      isCompleted: req.body.isCompleted,
+      difficulty: req.body.difficulty,
+      image: req.body.image,
     });
 
     res.status(201).json({
@@ -64,6 +108,7 @@ exports.updateTodo = async (req, res) => {
       {
         taskText: req.body.taskText,
         isCompleted: req.body.isCompleted,
+        difficulty: req.body.difficulty,
       },
       {
         new: true, // return new doc into updatedTodo variable
