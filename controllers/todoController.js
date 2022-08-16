@@ -1,4 +1,5 @@
 const Todo = require('../models/todoModel');
+const APIFeatures = require('../utils/apiFeatures');
 
 exports.getAllTodos = async (req, res) => {
   try {
@@ -7,39 +8,16 @@ exports.getAllTodos = async (req, res) => {
     const { page, sort, limit, fields, ...queryObj } = req.query;
 
     // 1B) Advanced filtering
-    const replacedQueryObj = JSON.parse(
-      JSON.stringify(queryObj).replace(
-        /\b(gte|gt|lte|lt)\b/g,
-        (matched) => `$${matched}`
-      )
-    );
-
-    let query = Todo.find(replacedQueryObj);
+    let query = APIFeatures.filter(queryObj, Todo);
 
     // 2) Sorting (dosent work anything, but numbers)
-    if (sort) {
-      // const sortBy = sort.replace(',', ' ');
-      // query = query.sort(sort);
-    } else {
-      query = query.sort('_id');
-    }
+    query = APIFeatures.sort(sort, query);
 
     // 3) Field limiting
-    if (fields) {
-      const selectedFields = fields.split(',').join(' ');
-      console.log(selectedFields);
-
-      query = query.select(selectedFields);
-    } else {
-      query = query.select('-__v');
-    }
+    query = APIFeatures.limitFields(fields, query);
 
     // 4) Pagination
-    const currentPage = +page || 1;
-    const currentLimit = +limit || 10;
-    const skip = (currentPage - 1) * currentLimit;
-
-    query = query.skip(skip).limit(currentLimit);
+    query = APIFeatures.paginate(page, limit, query);
 
     // EXECUTE QUERY
     const todos = await query;
