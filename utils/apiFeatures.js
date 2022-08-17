@@ -29,7 +29,7 @@ const APIFeatures = {
   },
   paginate: (page, limit, query) => {
     const currentPage = +page || 1;
-    const currentLimit = +limit || 5;
+    const currentLimit = +limit || 20;
     const skip = (currentPage - 1) * currentLimit;
 
     return query.skip(skip).limit(currentLimit);

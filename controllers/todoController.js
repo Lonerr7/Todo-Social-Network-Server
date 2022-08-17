@@ -45,6 +45,7 @@ exports.createTodo = async (req, res) => {
       isCompleted: req.body.isCompleted,
       difficulty: req.body.difficulty,
       image: req.body.image,
+      secretTodo: req.body.secretTodo,
     });
 
     res.status(201).json({

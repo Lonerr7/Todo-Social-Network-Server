@@ -24,11 +24,23 @@ const todoSchema = new mongoose.Schema({
     default: Date.now() + 3 * 60 * 60 * 1000,
   },
   slug: String,
+  secretTodo: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Document middleware: runs before .save() and .create(), but NOT after insertMany()
 todoSchema.pre('save', function (next) {
   this.slug = slugify(this.taskText, { lower: true });
+
+  next();
+});
+
+// Query middleware
+todoSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ secretTodo: { $ne: true } });
 
   next();
 });
