@@ -123,3 +123,32 @@ exports.deleteTodo = async (req, res) => {
     });
   }
 };
+
+// Aggregation pipeline
+exports.getTodoStats = async (req, res) => {
+  try {
+    const stats = await Todo.aggregate([
+      {
+        $match: { isCompleted: { $eq: false } },
+      },
+      {
+        $group: {
+          _id: '$difficulty',
+          numTodos: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};

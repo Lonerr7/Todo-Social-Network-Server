@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const todoSchema = new mongoose.Schema({
   taskText: {
@@ -22,6 +23,14 @@ const todoSchema = new mongoose.Schema({
     type: Date,
     default: Date.now() + 3 * 60 * 60 * 1000,
   },
+  slug: String,
+});
+
+// Document middleware: runs before .save() and .create(), but NOT after insertMany()
+todoSchema.pre('save', function (next) {
+  this.slug = slugify(this.taskText, { lower: true });
+
+  next();
 });
 
 const Todo = mongoose.model('Todo', todoSchema);
