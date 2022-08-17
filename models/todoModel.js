@@ -45,6 +45,13 @@ todoSchema.pre(/^find/, function (next) {
   next();
 });
 
+// Aggregation middleware
+todoSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTodo: { $ne: true } } });
+
+  next();
+});
+
 const Todo = mongoose.model('Todo', todoSchema);
 
 module.exports = Todo;
