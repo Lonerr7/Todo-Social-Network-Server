@@ -20,8 +20,15 @@ if (process.env.NODE_ENV === 'development') app.use(express.json());
 // Users
 
 app.use('/api/v1/todos', todoRouter);
-
 app.use('/api/v1/users', userRouter);
+
+// Handling wrong routes
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
 
 //* =================== Starting a server ===================
 
