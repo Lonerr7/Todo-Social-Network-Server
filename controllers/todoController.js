@@ -1,5 +1,6 @@
 const Todo = require('../models/todoModel');
 const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllTodos = catchAsync(async (req, res) => {
@@ -49,8 +50,12 @@ exports.createTodo = catchAsync(async (req, res) => {
   });
 });
 
-exports.getTodo = catchAsync(async (req, res) => {
+exports.getTodo = catchAsync(async (req, res, next) => {
   const todo = await Todo.findById(req.params.id);
+
+  if (!todo) {
+    return next(new AppError('No todo found with that ID', 404));
+  }
 
   res.status(201).json({
     status: 'success',
@@ -60,7 +65,7 @@ exports.getTodo = catchAsync(async (req, res) => {
   });
 });
 
-exports.updateTodo = catchAsync(async (req, res) => {
+exports.updateTodo = catchAsync(async (req, res, next) => {
   const updatedTodo = await Todo.findByIdAndUpdate(
     req.params.id,
     {
@@ -74,6 +79,10 @@ exports.updateTodo = catchAsync(async (req, res) => {
     }
   );
 
+  if (!updatedTodo) {
+    return next(new AppError('No todo found with that ID', 404));
+  }
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -82,8 +91,12 @@ exports.updateTodo = catchAsync(async (req, res) => {
   });
 });
 
-exports.deleteTodo = catchAsync(async (req, res) => {
-  await Todo.findByIdAndDelete(req.params.id);
+exports.deleteTodo = catchAsync(async (req, res, next) => {
+  const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+
+  if (!deletedTodo) {
+    return next(new AppError('No todo found with that ID', 404));
+  }
 
   res.status(204).json({
     status: 'success',
