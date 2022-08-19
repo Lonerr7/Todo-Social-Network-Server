@@ -14,8 +14,7 @@ const app = express();
 // Getting info about requests
 app.use(morgan('dev'));
 
-// Reading json from requests if we are in development environment
-if (process.env.NODE_ENV === 'development') app.use(express.json());
+app.use(express.json());
 
 //* =================== Routing ===================
 
