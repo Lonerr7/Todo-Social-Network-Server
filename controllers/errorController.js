@@ -8,7 +8,7 @@ const handleCastErrorDB = (err) => {
 
 const handleDuplicateFieldErrorDB = (err) => {
   const wrongValue = Object.values(err.keyValue)[0];
-  const message = `Duplicate field value: <${wrongValue}>. Please use another value!`;
+  const message = `The user with this value: <${wrongValue}> already exists. Please use another value!`;
 
   return new AppError(message, 400);
 };

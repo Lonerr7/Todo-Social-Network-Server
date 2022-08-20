@@ -9,6 +9,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     nickname: req.body.nickname,
   });
 
+  // Deleting password from response to the client when new user is created
+  newUser.password = undefined;
+
   res.status(201).json({
     status: 'success',
     data: {
