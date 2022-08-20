@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
 });
 
-// Encrypting a password
+// Encrypting a password (runs between the data is got from req.body and is saved to DB)
 userSchema.pre('save', async function (next) {
   // Only run if password was modified
   if (!this.isModified('password')) return next();
