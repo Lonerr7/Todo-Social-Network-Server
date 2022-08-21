@@ -1,4 +1,5 @@
 const express = require('express');
+const { protect } = require('../controllers/authController');
 const {
   getAllTodos,
   createTodo,
@@ -12,7 +13,7 @@ const router = express.Router();
 
 router.route('/todo-stats').get(getTodoStats);
 
-router.route('/').get(getAllTodos).post(createTodo);
+router.route('/').get(protect, getAllTodos).post(createTodo);
 router.route('/:id').get(getTodo).patch(updateTodo).delete(deleteTodo);
 
 module.exports = router;
