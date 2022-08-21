@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema({
     maxLength: [20, 'Nickname cannot be more than 20 characters!'],
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  },
 });
 
 // Encrypting a password (runs between the data is got from req.body and is saved to DB)
