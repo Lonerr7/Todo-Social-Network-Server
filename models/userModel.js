@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const AppError = require('../utils/appError');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -45,6 +46,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//* Middlewares
+
 // Encrypting a password (runs between the data is got from req.body and is saved to DB)
 userSchema.pre('save', async function (next) {
   // Only run if password was modified
@@ -54,6 +57,17 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   // Delete passwordConfirm field from DB (not persisting it)
   this.passwordConfirm = undefined;
+
+  next();
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) {
+    return next();
+  }
+
+  this.passwordChangedAt = Date.now();
+
   next();
 });
 
@@ -90,7 +104,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-  this.passwordResetExpires = Date.now() + 3 * 63 * 60 * 1000;  
+  this.passwordResetExpires = Date.now() + 3 * 63 * 60 * 1000;
 
   console.log({ resetToken }, this.passwordResetToken);
 
