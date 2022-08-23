@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(async (req, res) => {
@@ -32,6 +33,38 @@ exports.updateUser = (req, res) => {
     },
   });
 };
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // 1) If user tries to update a password create an Error
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'This route is not for password updates! Please use /updateMyPassword',
+        400
+      )
+    );
+  }
+
+  // 2) Update user document
+  const { nickname, email } = req.body;
+  const fieldsToUpdate = { nickname, email };
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    fieldsToUpdate,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
 
 exports.deleteUser = (req, res) => {
   res.status(204).json({
