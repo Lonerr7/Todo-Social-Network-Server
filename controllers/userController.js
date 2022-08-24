@@ -73,4 +73,39 @@ exports.deleteUser = (req, res) => {
   });
 };
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  // 1) Get user based on ID
+  const user = await User.findById(req.user._id)
+    .select('+password')
+    .select('+passwordConfirm');
+
+  // 2) If no user found || password (and passwordConfirm) is incorrect send an error
+  const isPasswordCorrect = await user.correctPassword(
+    req.body.password,
+    user.password
+  );
+
+  const isPasswordConfirmCorrect = await user.correctPassword(
+    req.body.passwordConfirm,
+    user.passwordConfirm
+  );
+
+  if (!user || !isPasswordCorrect || !isPasswordConfirmCorrect) {
+    return next(
+      new AppError(
+        'The user not found or password is incorrect! Try again',
+        404
+      )
+    );
+  }
+
+  // 3) Delete the user
+  await user.deleteOne();
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
+
 //* Middleware functions

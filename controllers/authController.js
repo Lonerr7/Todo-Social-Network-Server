@@ -38,6 +38,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
 
+  newUser.passwordConfirm = undefined;
+
   createSendToken(newUser, 201, res);
 });
 
