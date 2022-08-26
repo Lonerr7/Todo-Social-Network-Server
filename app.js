@@ -4,15 +4,26 @@ const todoRouter = require('./routes/todoRoutes');
 const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const rateLimit = require('express-rate-limit');
 
 //* =================== Creating an express app ===================
 
 const app = express();
 
-//* =================== Middlewares ===================
+//* =================== Global Middlewares ===================
 
 // Getting info about requests
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// Rate limiting numbers of requests
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP! Try again in 1 hour!',
+});
+app.use('/api', limiter);
 
 app.use(express.json());
 
