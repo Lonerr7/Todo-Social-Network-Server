@@ -5,12 +5,16 @@ const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 //* =================== Creating an express app ===================
 
 const app = express();
 
 //* =================== Global Middlewares ===================
+
+// Setting security HTTP headers
+app.use(helmet());
 
 // Getting info about requests
 if (process.env.NODE_ENV === 'development') {
@@ -25,7 +29,12 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-app.use(express.json());
+// Body parser. Reading data from body into req.body
+app.use(
+  express.json({
+    limit: '30kb',
+  })
+);
 
 //* =================== Routing ===================
 
