@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const hpp = require('hpp');
 
 //* =================== Creating an express app ===================
 
@@ -43,6 +44,11 @@ app.use(mongoSanitize());
 
 // Data sanitization agains XSS
 app.use(xss());
+
+// Preventing parameter pollution
+app.use(hpp({
+  whitelist: ['difficulty']
+}));
 
 //* =================== Routing ===================
 
