@@ -6,6 +6,8 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 //* =================== Creating an express app ===================
 
@@ -35,6 +37,12 @@ app.use(
     limit: '30kb',
   })
 );
+
+// Data sanitization against NoSQL query injections
+app.use(mongoSanitize());
+
+// Data sanitization agains XSS
+app.use(xss());
 
 //* =================== Routing ===================
 
