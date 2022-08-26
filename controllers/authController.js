@@ -18,6 +18,18 @@ const createSendToken = (user, statusCode, res) => {
   // Deleting password from response to the client when new user is created
   user.password = undefined;
 
+  // Sending a cookie
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  // Sendning a response
   res.status(statusCode).json({
     status: 'success',
     token,
