@@ -14,9 +14,14 @@ exports.getAllComments = catchAsync(async (req, res, next) => {
 });
 
 exports.createComment = catchAsync(async (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.todo) {
+    req.body.todo = req.params.todoId;
+  }
+
   const newComment = await Comment.create({
     comment: req.body.comment,
-    user: req.body.user,
+    user: req.user._id,
     todo: req.body.todo,
   });
 

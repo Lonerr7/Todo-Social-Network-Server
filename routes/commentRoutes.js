@@ -4,12 +4,13 @@ const {
   getAllComments,
   createComment,
 } = require('../controllers/commentController');
+const { USER } = require('../utils/roles');
 
 const router = express.Router();
 
 router
   .route('/')
   .get(getAllComments)
-  .post(protect, restrictTo('user', 'admin'), createComment);
+  .post(protect, restrictTo(USER), createComment);
 
 module.exports = router;
