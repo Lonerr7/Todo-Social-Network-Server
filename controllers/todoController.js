@@ -51,7 +51,7 @@ exports.createTodo = catchAsync(async (req, res) => {
 });
 
 exports.getTodo = catchAsync(async (req, res, next) => {
-  const todo = await Todo.findById(req.params.id);
+  const todo = await Todo.findById(req.params.id).populate('comments');
 
   if (!todo) {
     return next(new AppError('No todo found with that ID', 404));
