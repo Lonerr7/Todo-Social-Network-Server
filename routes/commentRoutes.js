@@ -6,7 +6,7 @@ const {
 } = require('../controllers/commentController');
 const { USER } = require('../utils/roles');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router
   .route('/')
