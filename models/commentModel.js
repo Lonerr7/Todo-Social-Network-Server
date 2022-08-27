@@ -28,6 +28,18 @@ const commentSchema = new mongoose.Schema(
   }
 );
 
+commentSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'todo',
+    select: 'taskText',
+  }).populate({
+    path: 'user',
+    select: 'nickname photo',
+  });
+
+  next();
+});
+
 const Comment = mongoose.model('Comment', commentSchema);
 
 module.exports = Comment;
