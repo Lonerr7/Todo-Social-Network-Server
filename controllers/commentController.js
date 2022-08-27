@@ -2,7 +2,15 @@ const Comment = require('../models/commentModel');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getAllComments = catchAsync(async (req, res, next) => {
-  const comments = await Comment.find();
+  let filter = {};
+
+  if (req.params.todoId) {
+    filter = {
+      todo: req.params.todoId,
+    };
+  }
+
+  const comments = await Comment.find(filter);
 
   res.status(200).json({
     status: 'success',

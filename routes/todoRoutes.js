@@ -25,8 +25,4 @@ router
   .patch(updateTodo)
   .delete(protect, restrictTo(ADMIN), deleteTodo);
 
-// router
-//   .route('/:todoId/comments')
-//   .post(protect, restrictTo(USER), createComment);
-
 module.exports = router;
