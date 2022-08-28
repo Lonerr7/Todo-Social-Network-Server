@@ -105,3 +105,26 @@ exports.deleteOne = (Model) =>
       data: null,
     });
   });
+
+const getModelName = (Model) => Model.modelName.toLowerCase();
+
+exports.deleteOneIfOwner = (Model, idField) =>
+  catchAsync(async (req, res, next) => {
+    const { id: userId } = req.user;
+    const { id } = req.params;
+
+    const doc = await Model.findOneAndDelete({
+      _id: id,
+      [idField]: { _id: userId },
+    }).exec();
+
+    if (!doc) {
+      next(new AppError(`Invalid ${getModelName(Model)} ID / Forbidden`, 403));
+      return;
+    }
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  });

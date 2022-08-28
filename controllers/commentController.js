@@ -1,5 +1,11 @@
 const Comment = require('../models/commentModel');
-const { deleteOne, updateOne, createOne, getOne, getAll } = require('./handlerFactory');
+const {
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+  deleteOne,
+} = require('./handlerFactory');
 
 exports.getAllComments = getAll(Comment);
 

@@ -8,15 +8,22 @@ const {
   setTodoId,
   getComment,
 } = require('../controllers/commentController');
-const { USER } = require('../utils/roles');
+const { USER, ADMIN } = require('../utils/roles');
 
 const router = express.Router({ mergeParams: true });
+
+router.use(protect);
 
 router
   .route('/')
   .get(getAllComments)
-  .post(protect, restrictTo(USER), setTodoId, createComment);
+  .post(restrictTo(USER), setTodoId, createComment);
 
-router.route('/:id').get(getComment).patch(updateComment).delete(deleteComment);
+// !
+router
+  .route('/:id')
+  .get(getComment)
+  .patch(updateComment)
+  .delete(protect, restrictTo(ADMIN, USER), deleteComment);
 
 module.exports = router;

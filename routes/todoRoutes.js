@@ -16,13 +16,13 @@ const router = express.Router();
 // Rerouting request into comment router
 router.use('/:todoId/comments', commentRouter);
 
-router.route('/todo-stats').get(getTodoStats);
+router.route('/todo-stats').get(protect, restrictTo(ADMIN), getTodoStats);
 
-router.route('/').get(protect, getAllTodos).post(createTodo);
+router.route('/').get(protect, getAllTodos).post(protect, createTodo);
 router
   .route('/:id')
   .get(getTodo)
-  .patch(updateTodo)
+  .patch(protect, updateTodo)
   .delete(protect, restrictTo(ADMIN, USER), deleteTodo);
 
 module.exports = router;
