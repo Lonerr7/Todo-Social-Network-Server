@@ -6,6 +6,7 @@ const {
   deleteComment,
   updateComment,
   setTodoId,
+  getComment,
 } = require('../controllers/commentController');
 const { USER } = require('../utils/roles');
 
@@ -16,6 +17,6 @@ router
   .get(getAllComments)
   .post(protect, restrictTo(USER), setTodoId, createComment);
 
-router.route('/:id').patch(updateComment).delete(deleteComment);
+router.route('/:id').get(getComment).patch(updateComment).delete(deleteComment);
 
 module.exports = router;

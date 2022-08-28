@@ -1,5 +1,7 @@
 const APIFeatures = {
-  filter: (queryObj, Model) => {
+  filter: (queryObj, Model, filterObj) => {
+    const query = Model.find(filterObj);
+
     const replacedQueryObj = JSON.parse(
       JSON.stringify(queryObj).replace(
         /\b(gte|gt|lte|lt)\b/g,
@@ -7,7 +9,7 @@ const APIFeatures = {
       )
     );
 
-    return Model.find(replacedQueryObj);
+    return query.find(replacedQueryObj);
   },
   sort: (sort, query) => {
     if (sort) {

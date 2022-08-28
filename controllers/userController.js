@@ -1,18 +1,9 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { deleteOne, updateOne } = require('./handlerFactory');
+const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
 
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) If user tries to update a password create an Error
@@ -82,6 +73,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 // FOR ADMINS (Do NOT update passwords with this)
+exports.getUser = getOne(User);
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 
