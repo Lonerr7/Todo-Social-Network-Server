@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { deleteOne } = require('./handlerFactory');
+const { deleteOne, updateOne } = require('./handlerFactory');
 
 exports.getAllUsers = catchAsync(async (req, res) => {
   const users = await User.find();
@@ -46,13 +46,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = (req, res) => {
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-};
-
 exports.deleteMe = catchAsync(async (req, res, next) => {
   // 1) Get user based on ID
   const user = await User.findById(req.user._id)
@@ -88,6 +81,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// FOR ADMINS (Do NOT update passwords with this)
+exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 
 //* Middleware functions

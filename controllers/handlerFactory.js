@@ -14,3 +14,34 @@ exports.deleteOne = (Model) =>
       data: null,
     });
   });
+
+exports.updateOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const updatedDoc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, // return new doc into updatedTodo variable
+      runValidators: true,
+    });
+
+    if (!updatedDoc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        data: updatedDoc,
+      },
+    });
+  });
+
+exports.createOne = (Model) =>
+  catchAsync(async (req, res) => {
+    const newDoc = await Model.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        data: newDoc,
+      },
+    });
+  });

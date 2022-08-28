@@ -2,7 +2,7 @@ const Todo = require('../models/todoModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { deleteOne } = require('./handlerFactory');
+const { deleteOne, updateOne, createOne } = require('./handlerFactory');
 
 exports.getAllTodos = catchAsync(async (req, res) => {
   // BUILD QUERY
@@ -34,22 +34,7 @@ exports.getAllTodos = catchAsync(async (req, res) => {
   });
 });
 
-exports.createTodo = catchAsync(async (req, res) => {
-  const newTodo = await Todo.create({
-    taskText: req.body.taskText,
-    isCompleted: req.body.isCompleted,
-    difficulty: req.body.difficulty,
-    image: req.body.image,
-    secretTodo: req.body.secretTodo,
-  });
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      todo: newTodo,
-    },
-  });
-});
+exports.createTodo = createOne(Todo);
 
 exports.getTodo = catchAsync(async (req, res, next) => {
   const todo = await Todo.findById(req.params.id).populate('comments');
@@ -66,32 +51,7 @@ exports.getTodo = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateTodo = catchAsync(async (req, res, next) => {
-  const updatedTodo = await Todo.findByIdAndUpdate(
-    req.params.id,
-    {
-      taskText: req.body.taskText,
-      isCompleted: req.body.isCompleted,
-      difficulty: req.body.difficulty,
-    },
-    {
-      new: true, // return new doc into updatedTodo variable
-      runValidators: true,
-    }
-  );
-
-  if (!updatedTodo) {
-    return next(new AppError('No todo found with that ID', 404));
-  }
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      todo: updatedTodo,
-    },
-  });
-});
-
+exports.updateTodo = updateOne(Todo);
 exports.deleteTodo = deleteOne(Todo);
 
 // Aggregation pipeline
