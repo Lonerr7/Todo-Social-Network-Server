@@ -5,6 +5,11 @@ const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
 
 exports.getAllUsers = getAll(User);
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) If user tries to update a password create an Error
   if (req.body.password || req.body.passwordConfirm) {
