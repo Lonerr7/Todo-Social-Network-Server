@@ -8,7 +8,7 @@ const {
   deleteTodo,
   getTodoStats,
 } = require('../controllers/todoController');
-const { ADMIN } = require('../utils/roles');
+const { ADMIN, USER } = require('../utils/roles');
 const commentRouter = require('../routes/commentRoutes');
 
 const router = express.Router();
@@ -23,6 +23,6 @@ router
   .route('/:id')
   .get(getTodo)
   .patch(updateTodo)
-  .delete(protect, restrictTo(ADMIN), deleteTodo);
+  .delete(protect, restrictTo(ADMIN, USER), deleteTodo);
 
 module.exports = router;

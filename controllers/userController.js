@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const { deleteOne } = require('./handlerFactory');
 
 exports.getAllUsers = catchAsync(async (req, res) => {
   const users = await User.find();
@@ -12,27 +13,6 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     },
   });
 });
-
-exports.getUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-  });
-};
-
-exports.createUser = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-  });
-};
-
-exports.updateUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: 'Updated User',
-    },
-  });
-};
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) If user tries to update a password create an Error
@@ -107,5 +87,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+exports.deleteUser = deleteOne(User);
 
 //* Middleware functions

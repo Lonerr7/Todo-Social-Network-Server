@@ -1,5 +1,6 @@
 const Comment = require('../models/commentModel');
 const catchAsync = require('../utils/catchAsync');
+const { deleteOne } = require('./handlerFactory');
 
 exports.getAllComments = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -40,3 +41,5 @@ exports.createComment = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteComment = deleteOne(Comment);
