@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 
 //* =================== Creating an express app ===================
 
@@ -17,21 +18,28 @@ const app = express();
 
 //* =================== Global Middlewares ===================
 
+// Using CORS
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
 // Setting security HTTP headers
 app.use(helmet());
 
 // Getting info about requests
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+app.use(morgan('dev'));
 
 // Rate limiting numbers of requests
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP! Try again in 1 hour!',
-});
-app.use('/api', limiter);
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'Too many requests from this IP! Try again in 1 hour!',
+// });
+// app.use('/api', limiter);
 
 // Body parser. Reading data from body into req.body
 app.use(

@@ -30,6 +30,11 @@ const todoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'User must have todo.'],
+    },
   },
   {
     toJSON: { virtuals: true },

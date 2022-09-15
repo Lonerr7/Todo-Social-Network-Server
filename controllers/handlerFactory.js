@@ -53,7 +53,7 @@ exports.getOne = (Model, populateOptions) =>
       return next(new AppError('No document found with that ID', 404));
     }
 
-    res.status(201).json({
+    res.status(200).json({
       status: 'success',
       data: {
         data: doc,
@@ -63,6 +63,8 @@ exports.getOne = (Model, populateOptions) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res) => {
+    req.body.user = req.user.id;
+
     const newDoc = await Model.create(req.body);
 
     res.status(201).json({

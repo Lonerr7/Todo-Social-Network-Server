@@ -3,47 +3,76 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, 'Please enter your login'],
-    unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please enter a valid email'],
-  },
-  password: {
-    type: String,
-    required: [true, 'Please enter your password'],
-    minLength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'], // means it is a required input, NOT required to be persisted in DB
-    validate: {
-      // ONLY WORKS ON CREATE AND SAVE!!!
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!',
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: [true, 'Please enter your login'],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Please enter a valid email'],
     },
-    select: false,
+    firstName: {
+      type: String,
+      maxLength: [20, 'First name cannot be more than 20 characters'],
+    },
+    lastName: {
+      type: String,
+      maxLength: [20, 'Last name cannot be more than 20 characters'],
+    },
+    bio: {
+      type: String,
+      maxLength: [100, 'Bio cannot be more, than 100 characters'],
+    },
+    password: {
+      type: String,
+      required: [true, 'Please enter your password'],
+      minLength: 8,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'], // means it is a required input, NOT required to be persisted in DB
+      validate: {
+        // ONLY WORKS ON CREATE AND SAVE!!!
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: 'Passwords are not the same!',
+      },
+      select: false,
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    nickname: {
+      type: String,
+      required: [true, 'Please enter your nickname'],
+      unique: true,
+      maxLength: [20, 'Nickname cannot be more than 20 characters!'],
+    },
+    photo: String,
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
+    todo: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Todo',
+    },
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  nickname: {
-    type: String,
-    required: [true, 'Please enter your nickname'],
-    unique: true,
-    maxLength: [20, 'Nickname cannot be more than 20 characters!'],
-  },
-  photo: String,
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
-  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+// virtual populate
+userSchema.virtual('todos', {
+  ref: 'Todo',
+  foreignField: 'user',
+  localField: '_id',
 });
 
 //* Middlewares

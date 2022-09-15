@@ -45,9 +45,10 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     nickname: req.body.nickname,
-    photo: req.body.photo,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
     passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
+    // role: req.body.role,
   });
 
   newUser.passwordConfirm = undefined;
