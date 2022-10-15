@@ -35,3 +35,12 @@ exports.getTodoStats = catchAsync(async (req, res) => {
     },
   });
 });
+
+exports.deleteAllUserTodos = catchAsync(async (req, res, next) => {
+  const deletedDocs = await Todo.deleteMany({ user: req.user.id });
+
+  res.status(204).json({
+    status: 'success',
+    data: deletedDocs,
+  });
+});

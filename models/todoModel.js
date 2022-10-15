@@ -8,6 +8,7 @@ const todoSchema = new mongoose.Schema(
       required: [true, 'Please enter a task'],
       trim: true,
       maxLength: [40, 'A task must not be more than 40 characters'],
+      unique: false,
     },
     difficulty: {
       type: String,
@@ -23,7 +24,7 @@ const todoSchema = new mongoose.Schema(
     image: String,
     createdAt: {
       type: Date,
-      default: Date.now() + 3 * 60 * 60 * 1000,
+      default: Date.now,
     },
     slug: String,
     secretTodo: {
@@ -34,6 +35,10 @@ const todoSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'User must have todo.'],
+    },
+    comment: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Comment',
     },
   },
   {

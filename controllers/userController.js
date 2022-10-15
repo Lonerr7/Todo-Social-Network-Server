@@ -22,8 +22,30 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Update user document
-  const { nickname, email, bio, firstName, lastName } = req.body;
-  const fieldsToUpdate = { nickname, email, bio, firstName, lastName };
+  const {
+    nickname,
+    email,
+    bio,
+    firstName,
+    lastName,
+    dateOfBirth,
+    country,
+    currentCity,
+    cityOfBirth,
+    phoneNumber,
+  } = req.body;
+  const fieldsToUpdate = {
+    nickname,
+    email,
+    bio,
+    firstName,
+    lastName,
+    dateOfBirth,
+    country,
+    currentCity,
+    cityOfBirth,
+    phoneNumber,
+  };
 
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
@@ -78,7 +100,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 // FOR ADMINS (Do NOT update passwords with this)
-exports.getUser = getOne(User, { path: 'todos' });
+exports.getUser = getOne(User, { path: 'todos', select: '-secretTodo -id' });
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 

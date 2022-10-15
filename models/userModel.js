@@ -52,6 +52,17 @@ const userSchema = new mongoose.Schema(
       maxLength: [20, 'Nickname cannot be more than 20 characters!'],
     },
     photo: String,
+    dateOfBirth: Date,
+    country: String,
+    currentCity: String,
+    cityOfBirth: String,
+    languages: [
+      {
+        type: String,
+        max: 15,
+      },
+    ],
+    phoneNumber: String,
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -74,6 +85,15 @@ userSchema.virtual('todos', {
   foreignField: 'user',
   localField: '_id',
 });
+
+// userSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'todo',
+//     select: 'taskText',
+//   });
+
+//   next();
+// });
 
 //* Middlewares
 

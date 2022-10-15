@@ -7,6 +7,7 @@ const {
   updateTodo,
   deleteTodo,
   getTodoStats,
+  deleteAllUserTodos,
 } = require('../controllers/todoController');
 const { ADMIN, USER } = require('../utils/roles');
 const commentRouter = require('../routes/commentRoutes');
@@ -18,7 +19,11 @@ router.use('/:todoId/comments', commentRouter);
 
 router.route('/todo-stats').get(protect, restrictTo(ADMIN), getTodoStats);
 
-router.route('/').get(protect, getAllTodos).post(protect, createTodo);
+router
+  .route('/')
+  .get(protect, getAllTodos)
+  .post(protect, createTodo)
+  .delete(protect, deleteAllUserTodos);
 router
   .route('/:id')
   .get(getTodo)
