@@ -28,11 +28,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     bio,
     firstName,
     lastName,
-    dateOfBirth,
-    country,
-    currentCity,
-    cityOfBirth,
-    phoneNumber,
+    generalInfo,
+    mainInfo,
+    contactInfo,
   } = req.body;
   const fieldsToUpdate = {
     nickname,
@@ -40,11 +38,9 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     bio,
     firstName,
     lastName,
-    dateOfBirth,
-    country,
-    currentCity,
-    cityOfBirth,
-    phoneNumber,
+    generalInfo,
+    mainInfo,
+    contactInfo,
   };
 
   const updatedUser = await User.findByIdAndUpdate(

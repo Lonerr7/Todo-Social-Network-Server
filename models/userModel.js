@@ -52,17 +52,23 @@ const userSchema = new mongoose.Schema(
       maxLength: [20, 'Nickname cannot be more than 20 characters!'],
     },
     photo: String,
-    dateOfBirth: Date,
-    country: String,
-    currentCity: String,
-    cityOfBirth: String,
+    generalInfo: {
+      dateOfBirth: Date,
+      currentCity: String,
+      country: String,
+    },
+    mainInfo: {
+      cityOfBirth: String,
+    },
+    contactInfo: {
+      phoneNumber: String,
+    },
     languages: [
       {
         type: String,
         max: 15,
       },
     ],
-    phoneNumber: String,
     role: {
       type: String,
       enum: ['user', 'admin'],
