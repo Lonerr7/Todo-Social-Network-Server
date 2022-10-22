@@ -50,25 +50,69 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please enter your nickname'],
       unique: true,
       maxLength: [20, 'Nickname cannot be more than 20 characters!'],
+      minLength: [3, 'Nickname is too short!'],
     },
     photo: String,
     generalInfo: {
       dateOfBirth: Date,
       currentCity: String,
       country: String,
+      relationship: {
+        type: String,
+        enum: ['Married', 'Not married', 'In active search'],
+      },
+      website: String,
+      jobPlace: String,
     },
     mainInfo: {
       cityOfBirth: String,
+      nativeLanguage: String,
+      languages: {
+        type: [
+          {
+            type: String,
+          },
+        ],
+      },
     },
     contactInfo: {
       phoneNumber: String,
+      discord: String,
     },
-    languages: [
-      {
+    beliefs: {
+      politicalViews: String, // ! Add enum and on front select
+      religion: String, // ! Add enum and on front select
+      inspiredBy: {
         type: String,
-        max: 15,
+        max: [40, 'Too much!'],
       },
-    ],
+    },
+    personalInfo: {
+      activities: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+      interests: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+      favoriteMusic: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+      favoriteMovies: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+      favouriteBooks: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+      aboutMe: {
+        type: String,
+        max: [40, 'Too much!'],
+      },
+    },
     role: {
       type: String,
       enum: ['user', 'admin'],
