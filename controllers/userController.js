@@ -11,7 +11,7 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split('/')[1];
-    cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+    cb(null, `user-${req.user.id}.${ext}`);
   },
 });
 
@@ -40,6 +40,7 @@ exports.getMe = (req, res, next) => {
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   console.log(req.file);
+  console.log(req.get('host'));
   // console.log(req.body);
 
   // 1) If user tries to update a password create an Error
@@ -69,7 +70,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     nickname,
     email,
     bio,
-    photo: req.file.originalName,
+    photo:
+      req.file?.filename &&
+      `http://localhost:8000/public/img/users/${req.file.filename}`,
+
     firstName,
     lastName,
     generalInfo,

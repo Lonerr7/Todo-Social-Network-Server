@@ -18,10 +18,13 @@ const app = express();
 
 //* =================== Global Middlewares ===================
 
+// For images access
+app.use('/public/img/users', express.static('public/img/users'));
+
 // Using CORS
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true, //access-control-allow-credentials:true
+  origin: '*',
+  credentials: true,
   optionSuccessStatus: 200,
 };
 
