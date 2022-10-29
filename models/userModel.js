@@ -59,7 +59,7 @@ const userSchema = new mongoose.Schema(
       country: String,
       relationship: {
         type: String,
-        enum: ['Married', 'Not married', 'In active search'],
+        enum: ['Married', 'Not married', 'In active search', 'Single', ''],
       },
       website: String,
       jobPlace: String,
@@ -67,17 +67,13 @@ const userSchema = new mongoose.Schema(
     mainInfo: {
       cityOfBirth: String,
       nativeLanguage: String,
-      languages: {
-        type: [
-          {
-            type: String,
-          },
-        ],
-      },
     },
     contactInfo: {
       phoneNumber: String,
-      discord: String,
+      discord: {
+        type: String,
+        max: [30, 'Your discord is too long!'],
+      },
     },
     beliefs: {
       politicalViews: String, // ! Add enum and on front select
@@ -96,6 +92,8 @@ const userSchema = new mongoose.Schema(
         type: String,
         max: [40, 'Too much!'],
       },
+      attitudeTowardsSmoking: String, //! add enum and select on front
+      attitudeTowardsDrinking: String, //! add enum and select on front
       favoriteMusic: {
         type: String,
         max: [40, 'Too much!'],
