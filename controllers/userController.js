@@ -7,7 +7,7 @@ const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
 // === Multer ===
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/img/users');
+    cb(null, 'public/img/users/avatars');
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split('/')[1];
@@ -72,7 +72,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     bio,
     photo:
       req.file?.filename &&
-      `http://localhost:8000/public/img/users/${req.file.filename}`,
+      `http://localhost:8000/public/img/users/avatars/${req.file.filename}`,
 
     firstName,
     lastName,
