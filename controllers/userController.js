@@ -11,6 +11,9 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.file);
+  // console.log(req.body);
+
   // 1) If user tries to update a password create an Error
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -26,6 +29,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     nickname,
     email,
     bio,
+    photo,
     firstName,
     lastName,
     generalInfo,
@@ -38,13 +42,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     nickname,
     email,
     bio,
+    photo,
     firstName,
     lastName,
     generalInfo,
     mainInfo,
     contactInfo,
     beliefs,
-    personalInfo
+    personalInfo,
   };
 
   const updatedUser = await User.findByIdAndUpdate(
