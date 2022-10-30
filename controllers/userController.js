@@ -39,10 +39,6 @@ exports.getMe = (req, res, next) => {
 };
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-  console.log(req.get('host'));
-  // console.log(req.body);
-
   // 1) If user tries to update a password create an Error
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -73,7 +69,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     photo:
       req.file?.filename &&
       `http://localhost:8000/public/img/users/avatars/${req.file.filename}`,
-
     firstName,
     lastName,
     generalInfo,
@@ -96,6 +91,21 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       user: updatedUser,
+    },
+  });
+});
+
+exports.changeMyAvatar = catchAsync(async (req, res, next) => {
+  const photo = req.file.filename;
+
+  const user = await User.findByIdAndUpdate(req.user._id, {
+    photo: `http://localhost:8000/public/img/users/avatars/${photo}`,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      photo: user.photo,
     },
   });
 });

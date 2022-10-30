@@ -18,6 +18,7 @@ const {
   updateUser,
   getMe,
   uploadUserPhoto,
+  changeMyAvatar,
 } = require('../controllers/userController');
 const { ADMIN } = require('../utils/roles');
 
@@ -35,6 +36,7 @@ router.use(protect);
 router.patch('/updateMyPassword', updatePassword);
 router.get('/me', getMe, getUser);
 router.patch('/updateMe', uploadUserPhoto, updateMe);
+router.patch('/updateMyAvatar', uploadUserPhoto, changeMyAvatar);
 router.delete('/deleteMe', deleteMe);
 
 router.route('/').get(getAllUsers);
