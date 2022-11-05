@@ -13,3 +13,12 @@ exports.createUserInfoArr = (data, neededKeys) => {
     })
     .filter((key) => key !== null);
 };
+
+exports.formatMessage = (user, msg) => {
+  return {
+    username: user.nickname,
+    message: msg,
+    avatar: user.photo,
+    id: user._id,
+  };
+};

@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const http = require('http');
 const app = require('./app');
 const socketio = require('socket.io');
+const { formatMessage } = require('./utils/helpers');
+const botName = 'Chat Bot';
+const User = require('./models/userModel');
 
 const server = http.createServer(app);
 const io = socketio(server, {
@@ -27,22 +30,34 @@ mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
 // Run when client connects
 io.on('connection', (socket) => {
   // Welcome current user
-  socket.emit('message', 'Welcome to my chat!'); // this will send message only to a user who is connecting
+  socket.emit('message', formatMessage(botName, 'Welcome to my chat!')); // this will send message only to a user who is connecting
 
   // Broadcast when a user connects
-  socket.broadcast.emit('message', 'A user has joined a chat'); // this will send message to everyone except user that's connecting
+  socket.broadcast.emit(
+    'message',
+    formatMessage(botName, 'A user has joined a chat')
+  ); // this will send message to everyone except user that's connecting
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-    io.emit('disconnectMessage', 'A user has left the chat!');
+    io.emit(
+      'disconnectMessage',
+      formatMessage(botName, 'A user has left the chat!')
+    );
   });
 
   // Listen for chatMessage
-  socket.on('chatMessage', (message) => {
-    io.emit('message', message)
-  });
+  socket.on('chatMessage', async (message) => {
+    console.log(message);
 
-  // io.emit(); // send message to EVERYBODY
+    const user = await User.findById(message.userId);
+
+    if (!user) {
+      io.emit('message', formatMessage('__UNKNOWN__', message.message));
+    }
+
+    io.emit('message', formatMessage(user, message.message));
+  });
 });
 
 // Creating a server
