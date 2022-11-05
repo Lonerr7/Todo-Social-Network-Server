@@ -23,7 +23,7 @@ app.use('/public/img/users', express.static('public/img/users'));
 
 // Using CORS
 const corsOptions = {
-  origin: '*',
+  origin: 'http://localhost:3000',
   credentials: true,
   optionSuccessStatus: 200,
 };
