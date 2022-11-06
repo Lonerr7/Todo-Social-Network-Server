@@ -29,21 +29,12 @@ mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
 
 // Run when client connects
 io.on('connection', (socket) => {
-  // Welcome current user
-  socket.emit('message', formatMessage(botName, 'Welcome to my chat!')); // this will send message only to a user who is connecting
-
-  // Broadcast when a user connects
-  socket.broadcast.emit(
-    'message',
-    formatMessage(botName, 'A user has joined a chat')
-  ); // this will send message to everyone except user that's connecting
-
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
-    io.emit(
-      'disconnectMessage',
-      formatMessage(botName, 'A user has left the chat!')
-    );
+  socket.on('joinChat', ({ username }) => {
+    // Broadcast when a user connects
+    socket.broadcast.emit(
+      'botMessage',
+      formatMessage(botName, `${username} has joined a chat`, true)
+    ); // this will send message to everyone except user that's connecting
   });
 
   // Listen for chatMessage
@@ -57,6 +48,14 @@ io.on('connection', (socket) => {
     }
 
     io.emit('message', formatMessage(user, message.message));
+  });
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    io.emit(
+      'disconnectMessage',
+      formatMessage(botName, 'A user has left the chat!', true)
+    );
   });
 });
 

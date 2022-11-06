@@ -14,7 +14,15 @@ exports.createUserInfoArr = (data, neededKeys) => {
     .filter((key) => key !== null);
 };
 
-exports.formatMessage = (user, msg) => {
+exports.formatMessage = (user, msg, fromBot) => {
+  if (fromBot) {
+    return {
+      message: msg,
+      userName: 'Chat Bot',
+      fromBot,
+    };
+  }
+
   return {
     username: user.nickname,
     message: msg,
