@@ -15,11 +15,11 @@ exports.createUserInfoArr = (data, neededKeys) => {
 };
 
 exports.formatMessage = (user, msg, fromBot) => {
-  if (fromBot) {
+  if (fromBot === 'fromBot') {
     return {
       message: msg,
       userName: 'Chat Bot',
-      fromBot,
+      fromBot: true,
     };
   }
 

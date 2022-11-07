@@ -6,6 +6,10 @@ const socketio = require('socket.io');
 const { formatMessage } = require('./utils/helpers');
 const botName = 'Chat Bot';
 const User = require('./models/userModel');
+const { userJoin, userDisconnect } = require('./utils/chatUsers');
+
+// Creating chat users array
+let chatUsers = [];
 
 const server = http.createServer(app);
 const io = socketio(server, {
@@ -27,20 +31,29 @@ dotenv.config({ path: './config.env' });
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASSWORD);
 mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
 
-// Run when client connects
+// === CHAT LOGIC WITH SOCKET.IO ===
 io.on('connection', (socket) => {
-  socket.on('joinChat', ({ username }) => {
+  // Logic when user joins chat
+  socket.on('joinChat', async ({ userId }) => {
+    const userDB = await User.findById(userId);
+    const joinedUser = userJoin(userDB, socket.id, chatUsers);
+
     // Broadcast when a user connects
     socket.broadcast.emit(
       'botMessage',
-      formatMessage(botName, `${username} has joined a chat`, true)
+      formatMessage(
+        botName,
+        `${joinedUser.nickname} has joined a chat`,
+        'fromBot'
+      )
     ); // this will send message to everyone except user that's connecting
+
+    // Send array of joined user to front-end
+    io.emit('userJoined', chatUsers);
   });
 
   // Listen for chatMessage
   socket.on('chatMessage', async (message) => {
-    console.log(message);
-
     const user = await User.findById(message.userId);
 
     if (!user) {
@@ -52,10 +65,28 @@ io.on('connection', (socket) => {
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-    io.emit(
-      'disconnectMessage',
-      formatMessage(botName, 'A user has left the chat!', true)
+    // Getting current disconnected user and updated array of connected users
+    const [disconnectedUser, newChatUsers] = userDisconnect(
+      '',
+      socket.id,
+      chatUsers
     );
+
+    // Updating chatUsers array (we filtered disconnected user in a step before)
+    chatUsers = [...newChatUsers];
+
+    if (disconnectedUser) {
+      io.emit('userDisconnected', chatUsers);
+
+      io.emit(
+        'disconnectMessage',
+        formatMessage(
+          botName,
+          `${disconnectedUser.nickname} has left the chat!`,
+          'fromBot'
+        )
+      );
+    }
   });
 });
 
