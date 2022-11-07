@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const todoRouter = require('./routes/todoRoutes');
 const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
+const chatUsersRouter = require('./routes/chatUserRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 // const rateLimit = require('express-rate-limit');
@@ -69,6 +70,7 @@ app.use(
 app.use('/api/v1/todos', todoRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/chatUsers', chatUsersRouter);
 
 // Handling wrong routes
 app.all('*', (req, res, next) => {
