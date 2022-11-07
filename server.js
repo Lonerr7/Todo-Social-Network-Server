@@ -6,6 +6,7 @@ const socketio = require('socket.io');
 const { formatMessage } = require('./utils/helpers');
 const botName = 'Chat Bot';
 const User = require('./models/userModel');
+const ChatUser = require('./models/chatUserModel');
 
 const server = http.createServer(app);
 const io = socketio(server, {
@@ -29,18 +30,33 @@ mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
 
 // Run when client connects
 io.on('connection', (socket) => {
-  socket.on('joinChat', ({ username }) => {
+  // Initialzie chatUser
+  let chatUser;
+
+  socket.on('joinChat', async ({ id }) => {
+    // Get connected user from all users
+    const connectedUser = await User.findById(id);
+    const { firstName, lastName, nickname, photo } = connectedUser;
+
+    // Add this user to the chat DB
+    const chatUserFields = {
+      firstName,
+      lastName,
+      nickname,
+      photo,
+    };
+
+    chatUser = await ChatUser.create(chatUserFields);
+
     // Broadcast when a user connects
     socket.broadcast.emit(
       'botMessage',
-      formatMessage(botName, `${username} has joined a chat`, true)
+      formatMessage(botName, `${chatUser.nickname} has joined a chat`, true)
     ); // this will send message to everyone except user that's connecting
   });
 
   // Listen for chatMessage
   socket.on('chatMessage', async (message) => {
-    console.log(message);
-
     const user = await User.findById(message.userId);
 
     if (!user) {
@@ -51,7 +67,9 @@ io.on('connection', (socket) => {
   });
 
   // Runs when client disconnects
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
+    await ChatUser.deleteOne(chatUser);
+
     io.emit(
       'disconnectMessage',
       formatMessage(botName, 'A user has left the chat!', true)

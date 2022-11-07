@@ -13,13 +13,13 @@ exports.getAll = (Model) =>
     }
 
     // BUILD QUERY
-    // 1A) FIltering
+    // 1A) Filtering
     const { page, sort, limit, fields, ...queryObj } = req.query;
 
     // 1B) Advanced filtering
     let query = APIFeatures.filter(queryObj, Model, filterObj);
 
-    // 2) Sorting (dosent work anything, but numbers)
+    // 2) Sorting (dosent work on anything, but numbers)
     query = APIFeatures.sort(sort, query);
 
     // 3) Field limiting
