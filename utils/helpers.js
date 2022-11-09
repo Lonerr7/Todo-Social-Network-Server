@@ -1,3 +1,5 @@
+const { v4: uuid } = require('uuid');
+
 exports.createUserInfoArr = (data, neededKeys) => {
   console.log({ data }, neededKeys);
 
@@ -17,15 +19,17 @@ exports.createUserInfoArr = (data, neededKeys) => {
 exports.formatMessage = (user, msg, fromBot) => {
   if (fromBot === 'fromBot') {
     return {
-      message: msg,
-      userName: 'Chat Bot',
+      text: msg,
+      id: uuid(),
       fromBot: true,
+      userId: user.id, // because we pass here formatted joinedUser
+      username: user.nickname,
     };
   }
 
   return {
     username: user.nickname,
-    message: msg,
+    text: msg,
     avatar: user.photo,
     id: user._id,
   };

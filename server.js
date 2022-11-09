@@ -4,7 +4,6 @@ const http = require('http');
 const app = require('./app');
 const socketio = require('socket.io');
 const { formatMessage } = require('./utils/helpers');
-const botName = 'Chat Bot';
 const User = require('./models/userModel');
 const { userJoin, userDisconnect } = require('./utils/chatUsers');
 
@@ -32,42 +31,39 @@ const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DB_PASSWORD);
 mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
 
 // === CHAT LOGIC WITH SOCKET.IO ===
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   // Logic when user joins chat
   socket.on('joinChat', async ({ userId }) => {
-    const userDB = await User.findById(userId);
-    const joinedUser = userJoin(userDB, socket.id, chatUsers);
+    const userFromDB = await User.findById(userId);
+
+    // push new user to chatUsers and return it from this function
+    userJoin(userFromDB, socket.id, chatUsers);
 
     // Broadcast when a user connects
-    socket.broadcast.emit(
-      'botMessage',
-      formatMessage(
-        botName,
-        `${joinedUser.nickname} has joined a chat`,
-        'fromBot'
-      )
-    ); // this will send message to everyone except user that's connecting
+    // socket.broadcast.emit(
+    //   'botMessage',
+    //   formatMessage(joinedUser, `has joined a chat`, 'fromBot')
+    // );
 
     // Send array of joined user to front-end
     io.emit('userJoined', chatUsers);
   });
 
-  // Listen for chatMessage
+  // Listen for chatMessages
   socket.on('chatMessage', async (message) => {
     const user = await User.findById(message.userId);
 
     if (!user) {
-      io.emit('message', formatMessage('__UNKNOWN__', message.message));
+      io.emit('message', formatMessage('__UNKNOWN__', message.text));
     }
 
-    io.emit('message', formatMessage(user, message.message));
+    io.emit('message', formatMessage(user, message.text));
   });
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
     // Getting current disconnected user and updated array of connected users
     const [disconnectedUser, newChatUsers] = userDisconnect(
-      '',
       socket.id,
       chatUsers
     );
@@ -78,14 +74,14 @@ io.on('connection', (socket) => {
     if (disconnectedUser) {
       io.emit('userDisconnected', chatUsers);
 
-      io.emit(
-        'disconnectMessage',
-        formatMessage(
-          botName,
-          `${disconnectedUser.nickname} has left the chat!`,
-          'fromBot'
-        )
-      );
+      // io.emit(
+      //   'botMessage',
+      //   formatMessage(
+      //     disconnectedUser,
+      //     `has left the chat!`,
+      //     'fromBot'
+      //   )
+      // );
     }
   });
 });

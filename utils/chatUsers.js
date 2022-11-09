@@ -11,7 +11,7 @@ exports.userJoin = (user, socketId, usersArr) => {
   return newUser;
 };
 
-exports.userDisconnect = (userId, socketId, usersArr) => {
+exports.userDisconnect = (socketId, usersArr) => {
   const user = usersArr.find((u) => u.socketId === socketId);
   return [user, usersArr.filter((user) => user.socketId !== socketId)];
 };
