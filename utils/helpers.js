@@ -1,5 +1,3 @@
-const { v4: uuid } = require('uuid');
-
 exports.createUserInfoArr = (data, neededKeys) => {
   console.log({ data }, neededKeys);
 

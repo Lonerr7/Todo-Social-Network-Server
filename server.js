@@ -35,18 +35,19 @@ io.on('connection', async (socket) => {
   // Logic when user joins chat
   socket.on('joinChat', async ({ userId }) => {
     const userFromDB = await User.findById(userId);
+    const chatMessages = await ChatMessage.find();
 
-    // push new user to chatUsers and return it from this function
+    // Guard clause
+    if (!userFromDB) return;
+
+    // Push new user to chatUsers and return it from this function
     userJoin(userFromDB, socket.id, chatUsers);
 
-    // Broadcast when a user connects
-    // socket.broadcast.emit(
-    //   'botMessage',
-    //   formatMessage(joinedUser, `has joined a chat`, 'fromBot')
-    // );
-
-    // Send array of joined user to front-end
+    // Send an array of updated joined users to all chat users every time a new user is joined
     io.emit('userJoined', chatUsers);
+
+    // Send an array of chat messages to newly joined user
+    socket.emit('getChatMessages', chatMessages);
   });
 
   // Listen for chatMessages
@@ -64,10 +65,6 @@ io.on('connection', async (socket) => {
       text: message.text,
     });
 
-    // if (!user) {
-    //   return io.emit('message', formatMessage('__UNKNOWN__', message.text));
-    // }
-
     io.emit('message', newMessage);
   });
 
@@ -84,15 +81,6 @@ io.on('connection', async (socket) => {
 
     if (disconnectedUser) {
       io.emit('userDisconnected', chatUsers);
-
-      // io.emit(
-      //   'botMessage',
-      //   formatMessage(
-      //     disconnectedUser,
-      //     `has left the chat!`,
-      //     'fromBot'
-      //   )
-      // );
     }
   });
 });
