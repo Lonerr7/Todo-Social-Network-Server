@@ -17,15 +17,15 @@ exports.createUserInfoArr = (data, neededKeys) => {
 };
 
 exports.formatMessage = (user, msg, fromBot) => {
-  if (fromBot === 'fromBot') {
-    return {
-      text: msg,
-      id: uuid(),
-      fromBot: true,
-      userId: user.id, // because we pass here formatted joinedUser
-      username: user.nickname,
-    };
-  }
+  // if (fromBot === 'fromBot') {
+  //   return {
+  //     text: msg,
+  //     id: uuid(),
+  //     fromBot: true,
+  //     userId: user.id, // because we pass here formatted joinedUser
+  //     username: user.nickname,
+  //   };
+  // }
 
   return {
     username: user.nickname,

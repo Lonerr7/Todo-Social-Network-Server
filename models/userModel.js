@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
     },
     photo: {
       type: String,
-      default: 'http://localhost:8000/public/img/users/default.jpg', //!
+      default: 'http://localhost:8000/public/img/users/avatars/default.jpg', //!
     },
     generalInfo: {
       dateOfBirth: Date,
@@ -194,7 +194,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     return JWTTimestamp < changedTimestamp;
   }
 
-  // False = not changed
+  // false = not changed
   return false;
 };
 

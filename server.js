@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const http = require('http');
 const app = require('./app');
 const socketio = require('socket.io');
-const { formatMessage } = require('./utils/helpers');
 const User = require('./models/userModel');
 const { userJoin, userDisconnect } = require('./utils/chatUsers');
+const ChatMessage = require('./models/chatMessageModel');
 
 // Creating chat users array
 let chatUsers = [];
@@ -54,10 +54,21 @@ io.on('connection', async (socket) => {
     const user = await User.findById(message.userId);
 
     if (!user) {
-      io.emit('message', formatMessage('__UNKNOWN__', message.text));
+      return;
     }
 
-    io.emit('message', formatMessage(user, message.text));
+    const newMessage = await ChatMessage.create({
+      userId: user._id.toString(),
+      nickname: user.nickname,
+      avatar: user.photo,
+      text: message.text,
+    });
+
+    // if (!user) {
+    //   return io.emit('message', formatMessage('__UNKNOWN__', message.text));
+    // }
+
+    io.emit('message', newMessage);
   });
 
   // Runs when client disconnects
