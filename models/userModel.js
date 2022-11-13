@@ -123,6 +123,11 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Todo',
     },
+    onlineStatus: {
+      type: String,
+      enum: ['Online', 'Offline', "Don't bother", 'Away', 'Sleeping'],
+      default: 'Online',
+    },
   },
   {
     toJSON: { virtuals: true },
