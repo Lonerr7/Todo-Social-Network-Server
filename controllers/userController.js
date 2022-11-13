@@ -1,6 +1,7 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/userModel');
+const ChatMessage = require('../models/chatMessageModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
@@ -77,6 +78,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     contactInfo,
     beliefs,
     personalInfo,
+    onlineStatus,
   } = req.body;
   const fieldsToUpdate = {
     nickname,
@@ -92,6 +94,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     contactInfo,
     beliefs,
     personalInfo,
+    onlineStatus,
   };
 
   const updatedUser = await User.findByIdAndUpdate(
@@ -154,6 +157,9 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 
   // 3) Delete the user
   await user.deleteOne();
+
+  // Delete all user messages
+  await ChatMessage.deleteMany({ userId: user.id });
 
   res.status(204).json({
     status: 'success',
