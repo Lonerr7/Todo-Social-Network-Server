@@ -68,6 +68,21 @@ io.on('connection', async (socket) => {
     io.emit('message', newMessage);
   });
 
+  // Delete user message
+  socket.on('deleteMessage', async ({ userId, messageId }) => {
+    const deletedMessage = await ChatMessage.findOneAndDelete({
+      userId,
+      _id: messageId,
+    });
+
+    // send error message when we don't have a message to delete
+    console.log(deletedMessage);
+
+    const messages = await ChatMessage.find();
+
+    io.emit('messageDeleted', messages);
+  });
+
   // Runs when client disconnects
   socket.on('disconnect', () => {
     // Getting current disconnected user and updated array of connected users
