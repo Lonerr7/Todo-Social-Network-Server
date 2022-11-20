@@ -79,11 +79,15 @@ const userSchema = new mongoose.Schema(
       },
     },
     beliefs: {
-      politicalViews: String, // ! Add enum and on front select
-      religion: String, // ! Add enum and on front select
+      politicalViews: String,
+      religion: {
+        type: String,
+        enum: ['Orthodoxy', 'Catholicism', 'Islam', 'Buddhism', 'Judaism', ''],
+        default: '',
+      },
       inspiredBy: {
         type: String,
-        max: [40, 'Too much!'],
+        max: [100, 'Too much!'],
       },
     },
     personalInfo: {
@@ -95,8 +99,16 @@ const userSchema = new mongoose.Schema(
         type: String,
         max: [40, 'Too much!'],
       },
-      attitudeTowardsSmoking: String, //! add enum and select on front
-      attitudeTowardsDrinking: String, //! add enum and select on front
+      attitudeTowardsSmoking: {
+        type: String,
+        enum: ['Positive', 'Neutral', 'Negative', 'Compromise', ''],
+        default: '',
+      },
+      attitudeTowardsDrinking: {
+        type: String,
+        enum: ['Positive', 'Neutral', 'Negative', 'Compromise', ''],
+        default: '',
+      },
       favoriteMusic: {
         type: String,
         max: [40, 'Too much!'],
