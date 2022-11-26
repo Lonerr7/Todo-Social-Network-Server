@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const todoRouter = require('./routes/todoRoutes');
@@ -16,6 +17,9 @@ const cors = require('cors');
 //* =================== Creating an express app ===================
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 //* =================== Global Middlewares ===================
 
