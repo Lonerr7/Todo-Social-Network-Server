@@ -29,7 +29,7 @@ router.post('/signup', signup);
 router.post('/login', login);
 
 router.post('/forgotPassword', forgotPassword);
-router.patch('/resetPassword/', resetPassword);
+router.patch('/resetPassword', resetPassword);
 
 // Protecting all routes after router.use(protect), because router is a mini-app which is capable of using middlewares.
 router.use(protect);

@@ -8,7 +8,6 @@ const todoSchema = new mongoose.Schema(
       required: [true, 'Please enter a task'],
       trim: true,
       maxLength: [40, 'A task must not be more than 40 characters'],
-      unique: false,
     },
     difficulty: {
       type: String,
