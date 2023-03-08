@@ -189,8 +189,6 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
   // 2) Findning an admin
   const admin = await User.findById(userId);
 
-  // console.log(admin.role);
-
   // 3) If he is an admin:
   if (admin.role === 'admin' || admin.role === 'CEO') {
     // 4) If the action is to lower a role:
@@ -203,7 +201,7 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
         // 4.1.1. If yes: lower.
         const updatedUser = await User.findOneAndUpdate(
           {
-            _id: id,
+            _id: user.id,
           },
           {
             role: 'user',
@@ -213,31 +211,73 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
           }
         );
 
-        console.log(`updatedUser`, updatedUser);
-
         return res.status(201).json({
           status: 'success',
           data: updatedUser,
         });
       } else {
         // 4.1.2. If no: return with Error.
-        return new AppError(
-          'Your role permission does not suit this action',
-          403
+        return next(
+          new AppError('Your role permission does not suit this action', 403)
+        );
+      }
+      // 5) If the action is to upgrade a role:
+    } else if (req.body.action === 'upgrade') {
+      // 5.1. Checking if roles are correct
+      if (
+        admin.role === 'CEO' &&
+        (user.role === 'admin' || user.role === 'user')
+      ) {
+        // 5.1.1. If yes: upgrade
+        const updatedUser = await User.findOneAndUpdate(
+          {
+            _id: user.id,
+          },
+          {
+            role: 'admin',
+          },
+          {
+            new: true,
+          }
+        );
+
+        return res.status(201).json({
+          status: 'success',
+          data: updatedUser,
+        });
+      } else if (admin.role === 'admin' && user.role === 'user') {
+        const updatedUser = await User.findOneAndUpdate(
+          {
+            _id: user.id,
+          },
+          {
+            role: 'admin',
+          },
+          {
+            new: true,
+          }
+        );
+
+        return res.status(201).json({
+          status: 'success',
+          data: updatedUser,
+        });
+      } else {
+        // 5.1.2. If no: return with Error.
+        return next(
+          new AppError('Your role permission does not suit this action', 403)
         );
       }
     }
   }
 
-  // 5) If the action is to upgrade a role:
-  // 5.1. The same when lowering except in another direction
+  // If user is not and admin return an error
+  return next(
+    new AppError(
+      `You don't have permission to perform this action / Forbiddden`,
+      403
+    )
+  );
 });
 
 //* Middleware functions
-
-// return next(
-//   new AppError(
-//     `You don't have permission to perform this action / Forbiddden`,
-//     403
-//   )
-// );
