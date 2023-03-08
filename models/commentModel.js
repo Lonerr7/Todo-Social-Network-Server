@@ -4,7 +4,7 @@ const commentSchema = new mongoose.Schema(
   {
     comment: {
       type: String,
-      minLength: [3, 'Comment is too small!'],
+      minLength: [1, 'Comment is too small!'],
       maxLength: [200, 'Comment is too big!'],
     },
     createdAt: {

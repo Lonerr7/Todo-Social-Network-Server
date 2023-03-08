@@ -128,9 +128,10 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'admin'],
+      enum: ['user', 'admin', 'CEO'],
       default: 'user',
     },
+    isVerified: Boolean,
     todo: {
       type: mongoose.Schema.ObjectId,
       ref: 'Todo',
@@ -139,6 +140,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['Online', 'Offline', "Don't bother", 'Away', 'Sleeping'],
       default: 'Online',
+    },
+    isBanned: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -157,7 +162,6 @@ userSchema.virtual('todos', {
 // userSchema.pre(/^find/, function (next) {
 //   this.populate({
 //     path: 'todo',
-//     select: 'taskText',
 //   });
 
 //   next();

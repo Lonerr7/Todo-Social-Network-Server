@@ -2,10 +2,10 @@ const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
-exports.getAll = (Model) =>
+exports.getAll = (Model, options) =>
   catchAsync(async (req, res) => {
     // To allow for nested GET comments on tour
-    let filterObj = {};
+    let filterObj = { ...options };
     if (req.params.todoId) {
       filterObj = {
         todo: req.params.todoId,
@@ -18,6 +18,11 @@ exports.getAll = (Model) =>
 
     // 1B) Advanced filtering
     let query = APIFeatures.filter(queryObj, Model, filterObj);
+    const allDocumentsCount = await APIFeatures.filter(
+      queryObj,
+      Model,
+      filterObj
+    );
 
     // 2) Sorting (dosent work on anything, but numbers)
     query = APIFeatures.sort(sort, query);
@@ -35,6 +40,7 @@ exports.getAll = (Model) =>
     res.status(200).json({
       status: 'success',
       results: docs.length,
+      allDocumentsCount: allDocumentsCount.length,
       data: {
         data: docs,
       },
@@ -123,8 +129,9 @@ exports.deleteOneIfOwner = (Model, idField) =>
     }).exec();
 
     if (!doc) {
-      next(new AppError(`Invalid ${getModelName(Model)} ID / Forbidden`, 403));
-      return;
+      return next(
+        new AppError(`Invalid ${getModelName(Model)} ID / Forbidden`, 403)
+      );
     }
 
     res.status(204).json({

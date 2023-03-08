@@ -48,7 +48,9 @@ exports.processUserPhoto = (req, res, next) => {
 };
 // ================
 
-exports.getAllUsers = getAll(User);
+exports.getAllUsers = getAll(User, {
+  isBanned: false,
+});
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
@@ -167,9 +169,75 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-// FOR ADMINS (Do NOT update passwords with this)
+// FOR CEOS (Do NOT update passwords with this)
 exports.getUser = getOne(User, { path: 'todos', select: '-secretTodo -id' });
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 
+exports.changeUserRole = catchAsync(async (req, res, next) => {
+  // 1) Getting all neccesary parameters
+  const { id: userId } = req.user;
+  const { id } = req.params;
+
+  // 1.2 Finding a user whoose role we want to upgrade / lower and checking if he exists
+  const user = await User.findById(id);
+
+  if (!user) {
+    return new AppError('The user you are looking for was not found', 404);
+  }
+
+  // 2) Findning an admin
+  const admin = await User.findById(userId);
+
+  // console.log(admin.role);
+
+  // 3) If he is an admin:
+  if (admin.role === 'admin' || admin.role === 'CEO') {
+    // 4) If the action is to lower a role:
+    if (req.body.action === 'lower') {
+      // 4.1. Checking if the user's role whoose we want to lower is lower than admin's role:
+      if (
+        admin.role === 'CEO' &&
+        (user.role === 'admin' || user.role === 'user')
+      ) {
+        // 4.1.1. If yes: lower.
+        const updatedUser = await User.findOneAndUpdate(
+          {
+            _id: id,
+          },
+          {
+            role: 'user',
+          },
+          {
+            new: true,
+          }
+        );
+
+        console.log(`updatedUser`, updatedUser);
+
+        return res.status(201).json({
+          status: 'success',
+          data: updatedUser,
+        });
+      } else {
+        // 4.1.2. If no: return with Error.
+        return new AppError(
+          'Your role permission does not suit this action',
+          403
+        );
+      }
+    }
+  }
+
+  // 5) If the action is to upgrade a role:
+  // 5.1. The same when lowering except in another direction
+});
+
 //* Middleware functions
+
+// return next(
+//   new AppError(
+//     `You don't have permission to perform this action / Forbiddden`,
+//     403
+//   )
+// );

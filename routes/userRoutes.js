@@ -20,8 +20,9 @@ const {
   uploadUserPhoto,
   changeMyAvatar,
   processUserPhoto,
+  changeUserRole,
 } = require('../controllers/userController');
-const { ADMIN } = require('../utils/roles');
+const { CEO } = require('../utils/roles');
 
 const router = express.Router();
 
@@ -45,11 +46,13 @@ router.patch(
 );
 router.delete('/deleteMe', deleteMe);
 
+router.patch('/changeUserRole/:id', changeUserRole);
+
 router.route('/').get(getAllUsers);
 router
   .route('/:id')
   .get(getUser)
-  .patch(restrictTo(ADMIN), updateUser)
-  .delete(restrictTo(ADMIN), deleteUser);
+  .patch(restrictTo(CEO), updateUser)
+  .delete(restrictTo(CEO), deleteUser);
 
 module.exports = router;
