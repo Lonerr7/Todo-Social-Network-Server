@@ -5,6 +5,7 @@ const ChatMessage = require('../models/chatMessageModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
+const { manipulateUserIfAdmin } = require('../utils/manipulateUserIfAdmin');
 
 // === Multer ===
 // const multerStorage = multer.diskStorage({
@@ -182,6 +183,7 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
   // 1.2 Finding a user whoose role we want to upgrade / lower and checking if he exists
   const user = await User.findById(id);
 
+  // if no user was found
   if (!user) {
     return new AppError('The user you are looking for was not found', 404);
   }
@@ -189,95 +191,16 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
   // 2) Findning an admin
   const admin = await User.findById(userId);
 
-  // 3) If he is an admin:
-  if (admin.role === 'admin' || admin.role === 'CEO') {
-    // 4) If the action is to lower a role:
-    if (req.body.action === 'lower') {
-      // 4.1. Checking if the user's role whoose we want to lower is lower than admin's role:
-      if (
-        admin.role === 'CEO' &&
-        (user.role === 'admin' || user.role === 'user')
-      ) {
-        // 4.1.1. If yes: lower.
-        const updatedUser = await User.findOneAndUpdate(
-          {
-            _id: user.id,
-          },
-          {
-            role: 'user',
-          },
-          {
-            new: true,
-          }
-        );
-
-        return res.status(201).json({
-          status: 'success',
-          data: updatedUser,
-        });
-      } else {
-        // 4.1.2. If no: return with Error.
-        return next(
-          new AppError('Your role permission does not suit this action', 403)
-        );
-      }
-      // 5) If the action is to upgrade a role:
-    } else if (req.body.action === 'upgrade') {
-      // 5.1. Checking if roles are correct
-      if (
-        admin.role === 'CEO' &&
-        (user.role === 'admin' || user.role === 'user')
-      ) {
-        // 5.1.1. If yes: upgrade
-        const updatedUser = await User.findOneAndUpdate(
-          {
-            _id: user.id,
-          },
-          {
-            role: 'admin',
-          },
-          {
-            new: true,
-          }
-        );
-
-        return res.status(201).json({
-          status: 'success',
-          data: updatedUser,
-        });
-      } else if (admin.role === 'admin' && user.role === 'user') {
-        const updatedUser = await User.findOneAndUpdate(
-          {
-            _id: user.id,
-          },
-          {
-            role: 'admin',
-          },
-          {
-            new: true,
-          }
-        );
-
-        return res.status(201).json({
-          status: 'success',
-          data: updatedUser,
-        });
-      } else {
-        // 5.1.2. If no: return with Error.
-        return next(
-          new AppError('Your role permission does not suit this action', 403)
-        );
-      }
-    }
+  if (!(await manipulateUserIfAdmin(User, req, res, next, admin, user))) {
+    return next(
+      new AppError(
+        `You don't have permission to perform this action / Forbidden`,
+        403
+      )
+    );
   }
 
   // If user is not and admin return an error
-  return next(
-    new AppError(
-      `You don't have permission to perform this action / Forbiddden`,
-      403
-    )
-  );
 });
 
 //* Middleware functions
