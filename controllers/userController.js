@@ -49,9 +49,7 @@ exports.processUserPhoto = (req, res, next) => {
 };
 // ================
 
-exports.getAllUsers = getAll(User, {
-  isBanned: false,
-});
+exports.getAllUsers = getAll(User);
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
@@ -191,6 +189,7 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
   // 2) Findning an admin
   const admin = await User.findById(userId);
 
+  // If user is not an admin return an error
   if (!(await manipulateUserIfAdmin(User, req, res, next, admin, user))) {
     return next(
       new AppError(
@@ -199,8 +198,33 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
       )
     );
   }
+});
 
-  // If user is not and admin return an error
+exports.banOrUnbanUser = catchAsync(async (req, res, next) => {
+  // 1) Getting all neccesary parameters
+  const { id: userId } = req.user;
+  const { id } = req.params;
+
+  // 1.2 Finding a user whoose role we want to upgrade / lower and checking if he exists
+  const user = await User.findById(id);
+
+  // if no user was found
+  if (!user) {
+    return new AppError('The user you are looking for was not found', 404);
+  }
+
+  // 2) Findning an admin
+  const admin = await User.findById(userId);
+
+  // If user is not an admin return an error
+  if (!(await manipulateUserIfAdmin(User, req, res, next, admin, user))) {
+    return next(
+      new AppError(
+        `You don't have permission to perform this action / Forbidden`,
+        403
+      )
+    );
+  }
 });
 
 //* Middleware functions

@@ -16,8 +16,9 @@ exports.manipulateUserIfAdmin = async (
     if (req.body.action === LOWER_ROLE || req.body.action === BAN) {
       // 4.1. Checking if the user's role whoose we want to lower is lower than admin's role:
       if (
-        admin.role === CEO_ROLE &&
-        (user.role === ADMIN_ROLE || user.role === USER_ROLE)
+        (admin.role === CEO_ROLE &&
+          (user.role === ADMIN_ROLE || user.role === USER_ROLE)) ||
+        (admin.role === ADMIN_ROLE && user.role === USER_ROLE)
       ) {
         // 4.1.1. If yes: lower.
         const updatedUser = await UserModel.findByIdAndUpdate(
@@ -29,7 +30,7 @@ exports.manipulateUserIfAdmin = async (
           {
             new: true,
           }
-        );
+        ).populate('todos');
 
         return res.status(201).json({
           status: 'success',
@@ -46,8 +47,9 @@ exports.manipulateUserIfAdmin = async (
     } else if (req.body.action === UPGRADE_ROLE || req.body.action === UNBAN) {
       // 5.1. Checking if roles are correct
       if (
-        (admin.role === CEO_ROLE || admin.role === ADMIN_ROLE) &&
-        user.role === USER_ROLE
+        ((admin.role === CEO_ROLE || admin.role === ADMIN_ROLE) &&
+          user.role === USER_ROLE) ||
+        (admin.role === CEO_ROLE && user.role === ADMIN_ROLE)
       ) {
         // 5.1.1. If yes: upgrade
         const updatedUser = await UserModel.findByIdAndUpdate(
@@ -59,7 +61,7 @@ exports.manipulateUserIfAdmin = async (
           {
             new: true,
           }
-        );
+        ).populate('todos');
 
         return res.status(201).json({
           status: 'success',

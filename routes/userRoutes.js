@@ -21,6 +21,7 @@ const {
   changeMyAvatar,
   processUserPhoto,
   changeUserRole,
+  banOrUnbanUser,
 } = require('../controllers/userController');
 const { CEO } = require('../utils/roles');
 
@@ -47,6 +48,7 @@ router.patch(
 router.delete('/deleteMe', deleteMe);
 
 router.patch('/changeUserRole/:id', changeUserRole);
+router.patch('/banOrUnbanUser/:id', banOrUnbanUser);
 
 router.route('/').get(getAllUsers);
 router
