@@ -23,7 +23,6 @@ const {
   changeUserRole,
   banOrUnbanUser,
 } = require('../controllers/userController');
-const { CEO } = require('../utils/roles');
 
 const router = express.Router();
 
@@ -47,14 +46,14 @@ router.patch(
 );
 router.delete('/deleteMe', deleteMe);
 
-router.patch('/changeUserRole/:id', changeUserRole);
-router.patch('/banOrUnbanUser/:id', banOrUnbanUser);
-
 router.route('/').get(getAllUsers);
 router
   .route('/:id')
   .get(getUser)
-  .patch(restrictTo(CEO), updateUser)
-  .delete(restrictTo(CEO), deleteUser);
+  .patch(restrictTo('CEO'), updateUser)
+  .delete(restrictTo('CEO'), deleteUser);
+
+router.patch('/changeUserRole/:id', changeUserRole);
+router.patch('/banOrUnbanUser/:id', banOrUnbanUser);
 
 module.exports = router;

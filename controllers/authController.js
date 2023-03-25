@@ -49,7 +49,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     passwordChangedAt: req.body.passwordChangedAt,
-    // role: req.body.role,
+    role: 'user',
   });
 
   newUser.passwordConfirm = undefined;
@@ -120,6 +120,7 @@ exports.restrictTo =
   (...roles) =>
   (req, res, next) => {
     if (!roles.includes(req.user.role)) {
+      console.log(req.user.role, roles);
       return next(
         new AppError(`You don't have permission to perform this action`, 403)
       );
