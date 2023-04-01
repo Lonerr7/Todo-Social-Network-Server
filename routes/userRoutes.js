@@ -1,4 +1,5 @@
 const express = require('express');
+const { CEO_ROLE } = require('../utils/roles');
 
 const {
   signup,
@@ -50,8 +51,8 @@ router.route('/').get(getAllUsers);
 router
   .route('/:id')
   .get(getUser)
-  .patch(restrictTo('CEO'), updateUser)
-  .delete(restrictTo('CEO'), deleteUser);
+  .patch(restrictTo(CEO_ROLE), updateUser)
+  .delete(restrictTo(CEO_ROLE), deleteUser);
 
 router.patch('/changeUserRole/:id', changeUserRole);
 router.patch('/banOrUnbanUser/:id', banOrUnbanUser);

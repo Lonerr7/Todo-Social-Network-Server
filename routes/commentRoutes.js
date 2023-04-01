@@ -8,7 +8,7 @@ const {
   getComment,
   deleteCommentIfOwner,
 } = require('../controllers/commentController');
-const { USER, ADMIN, CEO } = require('../utils/roles');
+const { USER_ROLE, ADMIN_ROLE, CEO_ROLE } = require('../utils/roles');
 
 const router = express.Router({ mergeParams: true });
 
@@ -17,12 +17,16 @@ router.use(protect);
 router
   .route('/')
   .get(getAllComments)
-  .post(restrictTo(USER, ADMIN, CEO), setTodoId, createComment);
+  .post(restrictTo(USER_ROLE, ADMIN_ROLE, CEO_ROLE), setTodoId, createComment);
 
 router
   .route('/:id')
   .get(getComment)
   .patch(updateComment)
-  .delete(protect, restrictTo(ADMIN, USER, CEO), deleteCommentIfOwner);
+  .delete(
+    protect,
+    restrictTo(ADMIN_ROLE, USER_ROLE, CEO_ROLE),
+    deleteCommentIfOwner
+  );
 
 module.exports = router;

@@ -223,7 +223,7 @@ exports.changeUserRole = catchAsync(async (req, res, next) => {
       {
         new: true,
       }
-    );
+    ).populate('todos');
 
     return res.status(201).json({
       status: 'success',

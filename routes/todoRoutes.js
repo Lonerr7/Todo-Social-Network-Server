@@ -10,7 +10,7 @@ const {
   deleteAllUserTodos,
   getTodoOwner,
 } = require('../controllers/todoController');
-const { ADMIN, USER, CEO } = require('../utils/roles');
+const { ADMIN_ROLE, CEO_ROLE, USER_ROLE } = require('../utils/roles');
 const commentRouter = require('../routes/commentRoutes');
 
 const router = express.Router();
@@ -18,7 +18,9 @@ const router = express.Router();
 // Rerouting request into comment router
 router.use('/:todoId/comments', commentRouter);
 
-router.route('/todo-stats').get(protect, restrictTo(ADMIN, CEO), getTodoStats);
+router
+  .route('/todo-stats')
+  .get(protect, restrictTo(ADMIN_ROLE, CEO_ROLE), getTodoStats);
 
 router.use(protect);
 
@@ -27,7 +29,7 @@ router
   .route('/:id')
   .get(getTodo)
   .patch(updateTodo)
-  .delete(restrictTo(ADMIN, USER, CEO), deleteTodo);
+  .delete(restrictTo(ADMIN_ROLE, USER_ROLE, CEO_ROLE), deleteTodo);
 
 router.route('/:id/owner').get(getTodoOwner);
 
