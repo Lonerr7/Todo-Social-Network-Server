@@ -195,6 +195,11 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+// deleting all user's references
+userSchema.pre('remove', function (next) {
+  // this.
+});
+
 //* Instance methods
 // Comparing encrypted password with entered password
 userSchema.methods.correctPassword = async function (

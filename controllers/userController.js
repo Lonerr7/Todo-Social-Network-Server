@@ -1,11 +1,13 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/userModel');
+const Todo = require('../models/todoModel');
 const ChatMessage = require('../models/chatMessageModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory');
+const { updateOne, getOne, getAll } = require('./handlerFactory');
 const { manipulateUserIfAdmin } = require('../utils/manipulateUserIfAdmin');
+const deleteUserAndAllUserInfo = require('../utils/deleteUserAndAllUserInfo');
 
 // === Multer ===
 // const multerStorage = multer.diskStorage({
@@ -156,11 +158,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 3) Delete the user
-  await user.deleteOne();
-
-  // Delete all user messages
-  await ChatMessage.deleteMany({ userId: user.id });
+  // 3) deleting user and all his info
+  await deleteUserAndAllUserInfo(user, ChatMessage, Todo);
 
   res.status(204).json({
     status: 'success',
@@ -171,7 +170,21 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 // FOR CEOS (Do NOT update passwords with this)
 exports.getUser = getOne(User, { path: 'todos', select: '-secretTodo -id' });
 exports.updateUser = updateOne(User);
-exports.deleteUser = deleteOne(User);
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  // 1) Getting user Doc
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new AppError('No document found with that ID', 404));
+  }
+
+  await deleteUserAndAllUserInfo(user, ChatMessage, Todo);
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
+  });
+});
 
 exports.changeUserRole = catchAsync(async (req, res, next) => {
   // 1) Getting all neccesary parameters

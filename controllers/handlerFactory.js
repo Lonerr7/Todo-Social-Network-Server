@@ -87,9 +87,7 @@ exports.updateOne = (Model) =>
       new: true, // return new doc into updatedTodo variable
       runValidators: true,
     });
-
-    console.log(req.body);
-
+    
     if (!updatedDoc) {
       return next(new AppError('No document found with that ID', 404));
     }
