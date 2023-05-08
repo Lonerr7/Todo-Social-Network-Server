@@ -52,9 +52,21 @@ const uploadOptions = {
   resource_type: 'auto',
 };
 
-const uploadImage = async (img) => {
+const uploadImage = async (img, userId) => {
   try {
+    const user = await User.findById(userId);
+
+    if (user.photoPublicId) {
+      uploadOptions.public_id = user.photoPublicId;
+    }
+
     const result = await cloudinary.uploader.upload(img, uploadOptions);
+
+    if (!user.photoPublicId) {
+      user.photoPublicId = result.public_id;
+      await user.save();
+    }
+
     return result;
   } catch (error) {
     return error.message;
@@ -62,7 +74,7 @@ const uploadImage = async (img) => {
 };
 
 exports.uploadUserPhoto = catchAsync(async (req, res, next) => {
-  const response = await uploadImage(req.body.img);
+  const response = await uploadImage(req.body.img, req.user._id);
 
   if (response.message) {
     return next(new AppError(response.message, 409));
@@ -72,30 +84,18 @@ exports.uploadUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.processUserPhoto = (req, res, next) => {
-  if (!req.file) return next();
-
-  req.file.filename = `user-${req.user.id}.jpeg`;
-
-  sharp(req.file.buffer)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/users/avatars/${req.file.filename}`);
-
-  next();
-};
-
 exports.changeMyAvatar = catchAsync(async (req, res) => {
   const photo = req.userPhoto;
+  console.log(photo);
 
-  const user = await User.findByIdAndUpdate(req.user._id, {
+  await User.findByIdAndUpdate(req.user._id, {
     photo: photo.secure_url,
   });
 
   res.status(200).json({
     status: 'success',
     data: {
-      photo: user.photo,
+      photo: photo.secure_url,
     },
   });
 });

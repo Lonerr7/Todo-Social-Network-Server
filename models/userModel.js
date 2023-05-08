@@ -53,10 +53,8 @@ const userSchema = new mongoose.Schema(
       maxLength: [20, 'Nickname cannot be more than 20 characters!'],
       minLength: [3, 'Nickname is too short!'],
     },
-    photo: {
-      type: String,
-      default: 'http://localhost:8000/public/img/users/avatars/default.jpg', //!
-    },
+    photo: String,
+    photoPublicId: String,
     generalInfo: {
       dateOfBirth: Date,
       currentCity: String,
