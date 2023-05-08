@@ -23,9 +23,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 //* =================== Global Middlewares ===================
 
-// For images access
-app.use('/public/img/users', express.static('public/img/users'));
-
 // Using CORS
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -52,8 +49,13 @@ app.use(morgan('dev'));
 // Body parser. Reading data from body into req.body
 app.use(
   express.json({
-    limit: '30kb',
+    limit: '50mb',
+    extended: true,
   })
+);
+
+app.use(
+  express.urlencoded({ extended: true, parameterLimit: 50000, limit: '50mb' })
 );
 
 // Data sanitization against NoSQL query injections

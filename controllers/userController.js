@@ -1,4 +1,5 @@
-const multer = require('multer');
+// const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const sharp = require('sharp');
 const User = require('../models/userModel');
 const Todo = require('../models/todoModel');
@@ -20,22 +21,56 @@ const deleteUserAndAllUserInfo = require('../utils/deleteUserAndAllUserInfo');
 //   },
 // });
 
-const multerStorage = multer.memoryStorage();
+// const multerStorage = multer.memoryStorage();
 
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Not an image. Please, upload only images', 400), false);
+// const multerFilter = (req, file, cb) => {
+//   if (file.mimetype.startsWith('image')) {
+//     cb(null, true);
+//   } else {
+//     cb(new AppError('Not an image. Please, upload only images', 400), false);
+//   }
+// };
+
+// const upload = multer({
+//   storage: multerStorage,
+//   fileFilter: multerFilter,
+// });
+
+// exports.uploadUserPhoto = upload.single('photo');
+
+// === Cloudinary ===
+cloudinary.config({
+  cloud_name: 'dpjxab8bq',
+  secure: true,
+  api_key: '449623978235478',
+  api_secret: 'fSF__DdDnB-NNgMuEkH-O-Zcmr4',
+});
+
+const uploadOptions = {
+  overwrite: true,
+  invalidate: true,
+  resource_type: 'auto',
+};
+
+const uploadImage = async (img) => {
+  try {
+    const result = await cloudinary.uploader.upload(img, uploadOptions);
+    return result;
+  } catch (error) {
+    return error.message;
   }
 };
 
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
+exports.uploadUserPhoto = catchAsync(async (req, res, next) => {
+  const response = await uploadImage(req.body.img);
 
-exports.uploadUserPhoto = upload.single('photo');
+  if (response.message) {
+    return next(new AppError(response.message, 409));
+  }
+
+  req.userPhoto = response;
+  next();
+});
 
 exports.processUserPhoto = (req, res, next) => {
   if (!req.file) return next();
@@ -49,6 +84,22 @@ exports.processUserPhoto = (req, res, next) => {
 
   next();
 };
+
+exports.changeMyAvatar = catchAsync(async (req, res) => {
+  const photo = req.userPhoto;
+
+  const user = await User.findByIdAndUpdate(req.user._id, {
+    photo: photo.secure_url,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      photo: user.photo,
+    },
+  });
+});
+
 // ================
 
 exports.getAllUsers = getAll(User);
@@ -113,21 +164,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       user: updatedUser,
-    },
-  });
-});
-
-exports.changeMyAvatar = catchAsync(async (req, res, next) => {
-  const photo = req.file.filename;
-
-  const user = await User.findByIdAndUpdate(req.user._id, {
-    photo: `http://localhost:8000/public/img/users/avatars/${photo}`,
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      photo: user.photo,
     },
   });
 });

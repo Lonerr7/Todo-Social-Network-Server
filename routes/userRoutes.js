@@ -20,7 +20,6 @@ const {
   getMe,
   uploadUserPhoto,
   changeMyAvatar,
-  processUserPhoto,
   changeUserRole,
   banOrUnbanUser,
 } = require('../controllers/userController');
@@ -39,12 +38,7 @@ router.use(protect);
 router.patch('/updateMyPassword', updatePassword);
 router.get('/me', getMe, getUser);
 router.patch('/updateMe', uploadUserPhoto, updateMe);
-router.patch(
-  '/updateMyAvatar',
-  uploadUserPhoto,
-  processUserPhoto,
-  changeMyAvatar
-);
+router.patch('/updateMyAvatar', uploadUserPhoto, changeMyAvatar);
 router.delete('/deleteMe', deleteMe);
 
 router.route('/').get(getAllUsers);
