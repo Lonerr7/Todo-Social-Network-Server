@@ -6,7 +6,7 @@
     "node": "16.x",
     "npm": "6.x"
   },
-  "main": "app.ts",
+  "main": "app.js",
   "scripts": {
     "start:dev": "SET NODE_ENV=development&&nodemon server.js",
     "start:prod": "SET NODE_ENV=production&&nodemon server.js"
