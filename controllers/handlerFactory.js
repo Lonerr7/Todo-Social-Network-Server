@@ -87,7 +87,7 @@ exports.updateOne = (Model) =>
       new: true, // return new doc into updatedTodo variable
       runValidators: true,
     });
-    
+
     if (!updatedDoc) {
       return next(new AppError('No document found with that ID', 404));
     }
@@ -137,10 +137,3 @@ exports.deleteOneIfOwner = (Model, idField) =>
       data: null,
     });
   });
-
-// exports.deleteMany = (Model, idField) =>
-//   catchAsync(async (req, res, next) => {
-//     const { id } = req.user;
-
-//     const deletedDoc = Model.deleteMany({})
-//   });

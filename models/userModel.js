@@ -158,14 +158,6 @@ userSchema.virtual('todos', {
   localField: '_id',
 });
 
-// userSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'todo',
-//   });
-
-//   next();
-// });
-
 //* Middlewares
 
 // Encrypting a password (runs between the data is got from req.body and is saved to DB)

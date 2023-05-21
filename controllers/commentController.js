@@ -1,12 +1,7 @@
 const Comment = require('../models/commentModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const {
-  updateOne,
-  getOne,
-  getAll,
-  deleteOne,
-} = require('./handlerFactory');
+const { updateOne, getOne, getAll, deleteOne } = require('./handlerFactory');
 
 exports.getAllComments = getAll(Comment);
 

@@ -1,6 +1,4 @@
-// const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const sharp = require('sharp');
 const User = require('../models/userModel');
 const Todo = require('../models/todoModel');
 const ChatMessage = require('../models/chatMessageModel');
@@ -9,34 +7,6 @@ const catchAsync = require('../utils/catchAsync');
 const { updateOne, getOne, getAll } = require('./handlerFactory');
 const { manipulateUserIfAdmin } = require('../utils/manipulateUserIfAdmin');
 const deleteUserAndAllUserInfo = require('../utils/deleteUserAndAllUserInfo');
-
-// === Multer ===
-// const multerStorage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'public/img/users/avatars');
-//   },
-//   filename: (req, file, cb) => {
-//     const ext = file.mimetype.split('/')[1];
-//     cb(null, `user-${req.user.id}.${ext}`);
-//   },
-// });
-
-// const multerStorage = multer.memoryStorage();
-
-// const multerFilter = (req, file, cb) => {
-//   if (file.mimetype.startsWith('image')) {
-//     cb(null, true);
-//   } else {
-//     cb(new AppError('Not an image. Please, upload only images', 400), false);
-//   }
-// };
-
-// const upload = multer({
-//   storage: multerStorage,
-//   fileFilter: multerFilter,
-// });
-
-// exports.uploadUserPhoto = upload.single('photo');
 
 // === Cloudinary ===
 cloudinary.config({
@@ -314,5 +284,3 @@ exports.banOrUnbanUser = catchAsync(async (req, res, next) => {
     );
   }
 });
-
-//* Middleware functions

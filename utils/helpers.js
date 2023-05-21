@@ -14,17 +14,7 @@ exports.createUserInfoArr = (data, neededKeys) => {
     .filter((key) => key !== null);
 };
 
-exports.formatMessage = (user, msg, fromBot) => {
-  // if (fromBot === 'fromBot') {
-  //   return {
-  //     text: msg,
-  //     id: uuid(),
-  //     fromBot: true,
-  //     userId: user.id, // because we pass here formatted joinedUser
-  //     username: user.nickname,
-  //   };
-  // }
-
+exports.formatMessage = (user, msg) => {
   return {
     username: user.nickname,
     text: msg,
