@@ -12,7 +12,7 @@ let chatUsers = [];
 
 const server = http.createServer(app);
 const io = socketio(server, {
-  origin: 'http://localhost:3000',
+  // origin: 'http://localhost:3000',
   credentials: true,
 });
 

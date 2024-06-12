@@ -8,8 +8,8 @@
   },
   "main": "app.js",
   "scripts": {
-    "start:dev": "SET NODE_ENV=development&&nodemon server.js",
-    "start:prod": "SET NODE_ENV=production&&nodemon server.js"
+    "start:dev": "SET NODE_ENV=development&&nodemon index.js",
+    "start:prod": "SET NODE_ENV=production&&nodemon index.js"
   },
   "author": "nic3guy",
   "license": "ISC",
