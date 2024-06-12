@@ -73,6 +73,11 @@ app.use(
 
 //* =================== Routing ===================
 
+app.get('/', function(req, res) {
+  res.send('Привет, мир!');
+});
+
+
 app.use('/api/v1/todos', todoRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);

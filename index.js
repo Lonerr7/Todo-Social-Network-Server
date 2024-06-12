@@ -16,6 +16,8 @@ const io = socketio(server, {
   credentials: true,
 });
 
+console.log(__dirname);
+
 // Handling uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 SHUTTING DOWN...');
