@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Using CORS
 const corsOptions = {
-  origin: 'https://lonerr7.github.io/Todo-Social-Network-Client/', 
+  origin: 'https://lonerr7.github.io//', 
   credentials: true,
   optionSuccessStatus: 200,
 };
