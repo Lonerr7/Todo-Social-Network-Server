@@ -11,7 +11,6 @@ const chatMessageSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'http://localhost:8000/public/img/users/avatars/default.jpg', //!
   },
   text: {
     type: String,

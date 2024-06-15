@@ -63,7 +63,7 @@ io.on('connection', async (socket) => {
     const newMessage = await ChatMessage.create({
       userId: user._id.toString(),
       nickname: user.nickname,
-      avatar: user.photo,
+      avatar: user.photo || null,
       text: message.text,
     });
 
