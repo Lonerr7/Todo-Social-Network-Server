@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Using CORS
 const corsOptions = {
-  origin: ['https://lonerr7.github.io', 'http://localhost:3000'], 
+  origin: '*',
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -73,10 +73,9 @@ app.use(
 
 //* =================== Routing ===================
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.send('Привет, мир!');
 });
-
 
 app.use('/api/v1/todos', todoRouter);
 app.use('/api/v1/users', userRouter);
