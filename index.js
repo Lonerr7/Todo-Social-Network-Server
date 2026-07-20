@@ -1,11 +1,12 @@
 const dotenv = require('dotenv');
-const mongoose = require('mongoose');
 const http = require('http');
 const app = require('./app');
 const socketio = require('socket.io');
 const User = require('./models/userModel');
 const { userJoin, userDisconnect } = require('./utils/chatUsers');
 const ChatMessage = require('./models/chatMessageModel');
+const { getIsInDevMode } = require('./utils/getIsInDevMode');
+const { connectToDB } = require('./utils/DB/connectToDB');
 
 // Creating chat users array
 let chatUsers = [];
@@ -16,8 +17,6 @@ const io = socketio(server, {
   credentials: true,
 });
 
-console.log(__dirname);
-
 // Handling uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 SHUTTING DOWN...');
@@ -25,12 +24,15 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-// ===
+// using .env
 dotenv.config({ path: './config.env' });
 
+if (getIsInDevMode()) {
+  dotenv.config({ path: './.env.local', override: true });
+}
+
 // Connecting to the DB
-const DB = process.env.DATABASE;
-mongoose.connect(DB).then(() => console.log(`DB CONNECTION SUCCESSFUL`));
+connectToDB();
 
 // === CHAT LOGIC WITH SOCKET.IO ===
 io.on('connection', async (socket) => {
@@ -39,7 +41,6 @@ io.on('connection', async (socket) => {
     const userFromDB = await User.findById(userId);
     const chatMessages = await ChatMessage.find();
 
-    // Guard clause
     if (!userFromDB) return;
 
     // Push new user to chatUsers and return it from this function
@@ -90,7 +91,7 @@ io.on('connection', async (socket) => {
     // Getting current disconnected user and updated array of connected users
     const [disconnectedUser, newChatUsers] = userDisconnect(
       socket.id,
-      chatUsers
+      chatUsers,
     );
 
     // Updating chatUsers array (we filtered disconnected user in a step before)
@@ -110,7 +111,7 @@ server.listen(port, () => {
 
 // Handling unhandled rejections
 process.on('unhandledRejection', (reason) => {
-  console.log(`UNHANDLED REJECTION! 💥 SHUTTING DOWN...`);
+  console.log('UNHANDLED REJECTION! 💥 SHUTTING DOWN...');
   console.log(reason);
   console.log(`REASON: ${reason.errmsg}`);
   server.close(() => process.exit(1));

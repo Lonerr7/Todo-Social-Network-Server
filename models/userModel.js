@@ -148,7 +148,7 @@ const userSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 // virtual populate
@@ -185,16 +185,11 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-// deleting all user's references
-userSchema.pre('remove', function (next) {
-  // this.
-});
-
 //* Instance methods
 // Comparing encrypted password with entered password
 userSchema.methods.correctPassword = async function (
   candidatePassword,
-  userPassword
+  userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
@@ -205,7 +200,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
-      10
+      10,
     );
 
     return JWTTimestamp < changedTimestamp;

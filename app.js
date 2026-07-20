@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Using CORS
 const corsOptions = {
-  origin: '*',
+  origin: ['https://lonerr7.github.io', 'http://localhost:3000'],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -51,11 +51,11 @@ app.use(
   express.json({
     limit: '50mb',
     extended: true,
-  })
+  }),
 );
 
 app.use(
-  express.urlencoded({ extended: true, parameterLimit: 50000, limit: '50mb' })
+  express.urlencoded({ extended: true, parameterLimit: 50000, limit: '50mb' }),
 );
 
 // Data sanitization against NoSQL query injections
@@ -68,14 +68,10 @@ app.use(xss());
 app.use(
   hpp({
     whitelist: ['difficulty'],
-  })
+  }),
 );
 
 //* =================== Routing ===================
-
-app.get('/', function (req, res) {
-  res.send('Привет, мир!');
-});
 
 app.use('/api/v1/todos', todoRouter);
 app.use('/api/v1/users', userRouter);
@@ -86,7 +82,7 @@ app.use('/api/v1/chatUsers', chatUsersRouter);
 app.all('*', (req, res, next) => {
   const err = new AppError(
     `Can't find ${req.originalUrl} on this server!`,
-    404
+    404,
   );
 
   next(err);

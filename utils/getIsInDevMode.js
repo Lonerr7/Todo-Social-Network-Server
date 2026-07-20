@@ -1,0 +1,1 @@
+exports.getIsInDevMode = () => process.env.NODE_ENV === 'development';
