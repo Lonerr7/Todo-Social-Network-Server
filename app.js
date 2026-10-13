@@ -13,6 +13,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const { connectToDB } = require('./utils/DB/connectToDB');
+
 
 //* =================== Creating an express app ===================
 
@@ -73,6 +75,18 @@ app.use(
     whitelist: ['difficulty'],
   }),
 );
+
+// Connecting to DB
+app.use(async (req, res, next) => {
+  try {
+  await connectToDB();
+  next();
+  } catch (err) {
+    res
+    .status(500)
+    .json({ status: 'error', message: 'Database connection failed' });
+  }
+});
 
 //* =================== Routing ===================
 

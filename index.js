@@ -1,18 +1,17 @@
 const dotenv = require('dotenv');
 const http = require('http');
 const app = require('./app');
-const socketio = require('socket.io');
+const socketIo = require('socket.io');
 const User = require('./models/userModel');
 const { userJoin, userDisconnect } = require('./utils/chatUsers');
 const ChatMessage = require('./models/chatMessageModel');
 const { getIsInDevMode } = require('./utils/getIsInDevMode');
-const { connectToDB } = require('./utils/DB/connectToDB');
 
 // Creating chat users array
 let chatUsers = [];
 
 const server = http.createServer(app);
-const io = socketio(server, {
+const io = socketIo(server, {
   // origin: 'http://localhost:3000',
   credentials: true,
 });
@@ -30,9 +29,6 @@ dotenv.config({ path: './config.env' });
 if (getIsInDevMode()) {
   dotenv.config({ path: './.env.local', override: true });
 }
-
-// Connecting to the DB
-connectToDB();
 
 // === CHAT LOGIC WITH SOCKET.IO ===
 io.on('connection', async (socket) => {
